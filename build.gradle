@@ -1,0 +1,285 @@
+import edu.wpi.first.toolchain.*
+
+plugins {
+    id 'cpp'
+    id 'java'
+    id 'java-library'
+    // id 'google-test'
+    id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
+    id 'edu.wpi.first.NativeUtils' version '2024.3.2'
+    id "edu.wpi.first.GradleRIO" version "2024.3.2"
+    id 'edu.wpi.first.GradleJni' version '1.1.0'
+    id 'edu.wpi.first.GradleVsCode' version '2.1.0'
+    // id 'com.diffplug.spotless' version '6.25.0'
+    id 'edu.wpi.first.WpilibTools' version '1.3.0'
+    id 'jacoco'
+}
+
+ext.getCurrentArch = {
+    return NativePlatforms.desktop
+}
+
+def systemArch = getCurrentArch()
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://maven.ctr-electronics.com/release/'
+    }
+    maven {
+        url 'https://frcmaven.wpi.edu/artifactory/release'
+    }
+    maven {
+        url 'https://maven.revrobotics.com'
+    }
+    maven {
+        url 'https://SleipnirGroup.github.io/ChoreoLib/dep'
+    }
+}
+if (project.hasProperty('releaseMode')) {
+    wpilibRepositories.addAllReleaseRepositories(project)
+} else {
+    wpilibRepositories.addAllDevelopmentRepositories(project)
+}
+
+// Apply C++ configuration
+apply from: 'config.gradle'
+
+// Apply Java configuration
+dependencies {
+    implementation group: 'com.ctre.phoenix6', name: 'wpiapi-java', version: '24.2.0'
+    // implementation group: 'com.ctre.phoenix', name: 'api-java', version: '5.33.0'
+    // implementation group: 'com.ctre.phoenix', name: 'wpiapi-java', version: '5.33.0'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
+    implementation group: 'edu.wpi.first.wpilibj', name: 'wpilibj-java', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.wpiutil', name: 'wpiutil-java', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.wpimath', name: 'wpimath-java', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.wpilibNewCommands', name: 'wpilibNewCommands-java', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.wpiunits', name: 'wpiunits-java', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-java', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-jni', version: '2024.3.2'
+    implementation group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '2024.3.2'
+
+    api "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
+    api "com.fasterxml.jackson.core:jackson-core:2.15.2"
+    api "com.fasterxml.jackson.core:jackson-databind:2.15.2"
+
+
+    // This is needed to use wpilibj Filesystem class
+    testImplementation 'edu.wpi.first.cscore:cscore-java:2024.+'
+    testImplementation 'edu.wpi.first.cameraserver:cameraserver-java:2024.+'
+    testImplementation 'edu.wpi.first.hal:hal-java:2024.+'
+
+    testImplementation 'us.hebi.quickbuf:quickbuf-runtime:1.3.3'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.10.1'
+    
+}
+
+
+// Set up java tests
+test {
+    useJUnitPlatform()
+    systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
+}
+
+// set up java docs
+// javadoc {
+//     destinationDir = file("${buildDir}/docs/javadoc")
+//     source = sourceSets.main.allJava
+//     include 'src/**'
+// }
+task generateJavadoc(type: Javadoc) {
+    source = file('src/main/java/frc/tagalong/**.java')
+    classpath = sourceSets.main.compileClasspath
+    // destinationDir = file("docs")
+}
+
+// task generateJavadoc(type: Javadoc) {
+//     source = file('src/main/java/frc/tagalong/utils/TagalongAlliancePose2d.java')
+//     classpath = sourceSets.main.compileClasspath
+//     destinationDir = file("docs")
+// }
+
+def ROBOT_MAIN_CLASS = "frc.robot.Main"
+
+// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
+// in order to make them all available at runtime. Also adding the manifest so WPILib
+// knows where to look for our Robot Class.
+jar {
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from sourceSets.main.allSource
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+// // Configure jar and deploy tasks
+// def deployArtifact = deploy.targets.roborio.artifacts.frcJava
+// deployArtifact.jarTask = jar
+// wpi.java.configureExecutableTasks(jar)
+// wpi.java.configureTestTasks(test)
+
+if (project.hasProperty('onlylinuxathena') || project.hasProperty('onlylinuxarm32') || project.hasProperty('onlylinuxarm64') || project.hasProperty('onlywindowsarm64')) {
+    test.enabled = false
+}
+
+// Set up exports properly
+nativeUtils {
+    exportsConfigs {
+        TagalongLib {
+            x86ExcludeSymbols = [
+                '_CT??_R0?AV_System_error',
+                '_CT??_R0?AVexception',
+                '_CT??_R0?AVfailure',
+                '_CT??_R0?AVruntime_error',
+                '_CT??_R0?AVsystem_error',
+                '_CTA5?AVfailure',
+                '_TI5?AVfailure',
+                '_CT??_R0?AVout_of_range',
+                '_CTA3?AVout_of_range',
+                '_TI3?AVout_of_range',
+                '_CT??_R0?AVbad_cast'
+            ]
+            x64ExcludeSymbols = [
+                '_CT??_R0?AV_System_error',
+                '_CT??_R0?AVexception',
+                '_CT??_R0?AVfailure',
+                '_CT??_R0?AVruntime_error',
+                '_CT??_R0?AVsystem_error',
+                '_CTA5?AVfailure',
+                '_TI5?AVfailure',
+                '_CT??_R0?AVout_of_range',
+                '_CTA3?AVout_of_range',
+                '_TI3?AVout_of_range',
+                '_CT??_R0?AVbad_cast'
+            ]
+        }
+    }
+}
+
+// model {
+//     components {
+//         TagalongLib(NativeLibrarySpec) {
+//             sources {
+//                 cpp {
+//                     source {
+//                         srcDirs 'src/main/native/cpp'
+//                         include '**/*.cpp'
+//                     }
+//                     exportedHeaders {
+//                         srcDirs 'src/main/native/include'
+//                     }
+//                 }
+//             }
+//             nativeUtils.useRequiredLibrary(it, 'wpilib_shared')
+//         }
+//     }
+//     // testSuites {
+//     //     TagalongLibTest {
+//     //         sources.cpp {
+//     //             source {
+//     //                 srcDir 'src/test/native/cpp'
+//     //                 include '**/*.cpp'
+//     //             }
+//     //         }
+
+//     //         // nativeUtils.useRequiredLibrary(it, "wpilib_executable_shared", "googletest_static")
+
+//     //         binaries.all {
+//     //             def arch = it.targetPlatform.name
+//     //             if (systemArch == arch && it.buildType.name == 'debug') {
+//     //                 def filePath = it.tasks.install.installDirectory.get().toString() + File.separatorChar + 'lib'
+//     //                 test.dependsOn it.tasks.install
+//     //                 test.systemProperty 'java.library.path', filePath
+//     //                 test.environment 'LD_LIBRARY_PATH', filePath
+//     //                 test.workingDir filePath
+//     //             }
+//     //         }
+//     //     }
+//     // }
+// }
+
+// spotless {
+//     java {
+//         target fileTree('.') {
+//             include '**/*.java'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         toggleOffOn()
+//         googleJavaFormat()
+//         removeUnusedImports()
+//         trimTrailingWhitespace()
+//         endWithNewline()
+//     }
+//     groovyGradle {
+//         target fileTree('.') {
+//             include '**/*.gradle'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         greclipse()
+//         indentWithSpaces(4)
+//         trimTrailingWhitespace()
+//         endWithNewline()
+//     }
+//     format 'misc', {
+//         target fileTree('.') {
+//             include '**/*.md', '**/.gitignore'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         trimTrailingWhitespace()
+//         indentWithSpaces(4)
+//         endWithNewline()
+//     }
+// }
+
+javadoc {
+    options.links("https://docs.oracle.com/en/java/javase/17/docs/api/")
+    options.links("https://github.wpilib.org/allwpilib/docs/release/java/")
+    options.addBooleanOption("Xdoclint:html,missing,reference,syntax", true)
+    options.addBooleanOption('html5', true)
+    options.addStringOption("charset", "utf-8")
+    options.addStringOption("docencoding", "utf-8")
+    options.addStringOption("encoding", "utf-8")
+    options.linkSource(true)
+    failOnError = true
+
+    title = "Tagalong Library"
+
+    // // Uncomment to treat javadoc warnings as errors.
+    // //
+    // // The second argument '-quiet' is a hack. The one parameter
+    // // addStringOption() doesn't work, so we add '-quiet', which is added
+    // // anyway by gradle. See https://github.com/gradle/gradle/issues/2354.
+    // options.addStringOption('Werror', '-quiet')
+}
+
+// jacocoTestReport {
+//     reports {
+//         xml.required.set(true)
+//     }
+// }
+
+// test {
+//     dependsOn cleanTest
+
+//     useJUnitPlatform()
+//     testLogging.showStandardStreams = true
+
+//     finalizedBy jacocoTestReport
+// }
+
+apply from: 'publish.gradle'
+
+wrapper {
+    gradleVersion '8.5'
+}
