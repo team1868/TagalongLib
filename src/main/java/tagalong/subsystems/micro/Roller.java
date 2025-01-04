@@ -309,6 +309,24 @@ public class Roller extends Microsystem {
    * Creates a new trapezoidal profile for the roller to follow
    *
    * @param goalPosition     goal position in rotations
+   */
+  public void setRollerProfile(Angle goalPosition) {
+    setRollerProfile(goalPosition.getRotations());
+  }
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   */
+  public void setRollerProfile(Angle goalPosition, double goalVelocityRPS) {
+    setRollerProfile(goalPosition.getRotations(), goalVelocityRPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPosition     goal position in rotations
    * @param goalVelocityRPS     goal velocity in rotations per second
    * @param maxVelocityRPS      maximum velocity in rotations per second
    */

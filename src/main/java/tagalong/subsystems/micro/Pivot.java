@@ -67,8 +67,8 @@ public class Pivot extends Microsystem {
    */
   public final double _absoluteRangeRot;
   /**
-   * Minimum height of the pivot in rotations,
-   * Maximum height of the pivot in rotations
+   * Minimum position of the pivot in rotations,
+   * Maximum position of the pivot in rotations
    */
   public final double _minPositionRot, _maxPositionRot;
   /**
@@ -431,6 +431,25 @@ public class Pivot extends Microsystem {
    */
   public double placePivotInClosestRot(double scopeReferenceRot, double newAngleRot) {
     return AlgebraicUtils.placeInScopeRot(scopeReferenceRot, newAngleRot);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   */
+  public void setPivotProfile(Angle goalPosition) {
+    setPivotProfile(goalPosition.getRotations());
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   */
+  public void setPivotProfile(Angle goalPosition, double goalVelocityRPS) {
+    setPivotProfile(goalPosition.getRotations(), goalVelocityRPS);
   }
 
   /**

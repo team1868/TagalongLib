@@ -177,6 +177,25 @@ public class Elevator extends Microsystem {
    * Creates a new trapezoidal profile for the elevator to follow
    *
    * @param goalPosition     goal position in meters
+   */
+  public void setElevatorProfile(Height goalPosition) {
+    setElevatorProfile(goalPosition.getHeightM());
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
+   * @param goalVelocityMPS     goal velocity in meters per second
+   */
+  public void setElevatorProfile(Height goalPosition, double goalVelocityMPS) {
+    setElevatorProfile(goalPosition.getHeightM(), goalVelocityMPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
    * @param goalVelocityMPS     goal velocity in meters per second
    * @param maxVelocityMPS      maximum velocity in meters per second
    */
@@ -231,10 +250,10 @@ public class Elevator extends Microsystem {
   /**
    * Creates a new trapezoidal profile for the elevator to follow
    *
-   * @param goalPositionRot goal position in meters
+   * @param goalPositionM goal position in meters
    */
-  public void setElevatorProfile(double goalPositionRot) {
-    setElevatorProfile(goalPositionRot, 0.0);
+  public void setElevatorProfile(double goalPositionM) {
+    setElevatorProfile(goalPositionM, 0.0);
   }
 
   /**
