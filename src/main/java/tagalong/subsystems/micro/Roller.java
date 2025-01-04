@@ -580,9 +580,9 @@ public class Roller extends Microsystem {
   /**
    * Bounds checking function that uses the current roller position
    *
-   * @param lowerBound Minimum of acceptable range
-   * @param upperBound Maximum of acceptable range
-   * @return If the current position is in specified acceptable range
+   * @param lowerBound minimum of acceptable range
+   * @param upperBound maximum of acceptable range
+   * @return if the current position is in specified acceptable range
    */
   public boolean isRollerInTolerance(double lowerBound, double upperBound) {
     if (_isMicrosystemDisabled) {

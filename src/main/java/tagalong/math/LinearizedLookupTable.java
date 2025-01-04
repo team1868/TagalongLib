@@ -14,6 +14,9 @@ public class LinearizedLookupTable {
   private double[] _values;
   private double max, min;
 
+  /**
+   * Constructs a lookup table containing ids and their corresponding values
+   */
   public LinearizedLookupTable(double[] id, double[] values) {
     if (id.length != values.length)
       throw new IllegalArgumentException();
@@ -40,6 +43,12 @@ public class LinearizedLookupTable {
     min = _ids[0];
   }
 
+  /**
+   * Returns the value that the id maps to on a continuous, linearized function
+   *
+   * @param id id contained in the lookup table
+   * @return value using linearized lookup
+   */
   public double lookup(double id) {
     double newId = Math.max(Math.min(id, max), min);
 

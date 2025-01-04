@@ -276,8 +276,8 @@ public class Pivot extends Microsystem {
   /**
    * Converts motor rotations to rotations of the pivot mechanism
    *
-   * @param motorRot Position of the motor in rotations
-   * @return Position of the pivot in rotations
+   * @param motorRot position of the motor in rotations
+   * @return position of the pivot in rotations
    */
   public double motorToPivotRot(double motorRot) {
     if (_isMicrosystemDisabled) {
@@ -290,8 +290,8 @@ public class Pivot extends Microsystem {
   /**
    * Converts rotations of the pivot mechanism to motor rotations
    *
-   * @param pivotRot Position of the pivot in rotations
-   * @return Position of the motor in rotations
+   * @param pivotRot position of the pivot in rotations
+   * @return position of the motor in rotations
    */
   public double pivotRotToMotor(double pivotRot) {
     if (_isMicrosystemDisabled) {
@@ -735,9 +735,9 @@ public class Pivot extends Microsystem {
   /**
    * Bounds checking function that uses the current pivot position
    *
-   * @param lowerBound Minimum of acceptable range
-   * @param upperBound Maximum of acceptable range
-   * @return If the current position is greater than or equal to the lower bound and less than or
+   * @param lowerBound minimum of acceptable range
+   * @param upperBound maximum of acceptable range
+   * @return if the current position is greater than or equal to the lower bound and less than or
    *     equal to the upper bound
    */
   public boolean isPivotInTolerance(double lowerBound, double upperBound) {
@@ -750,9 +750,9 @@ public class Pivot extends Microsystem {
   /**
    * Bounds checking function that uses the absolute current pivot position (modulo one rotation)
    *
-   * @param lowerBound Minimum of acceptable range
-   * @param upperBound Maximum of acceptable range
-   * @return If the absolute current position is in absolute acceptable range
+   * @param lowerBound minimum of acceptable range
+   * @param upperBound maximum of acceptable range
+   * @return if the absolute current position is in absolute acceptable range
    */
   public boolean isPivotInAbsoluteTolerance(double lowerBound, double upperBound) {
     double position = AlgebraicUtils.cppMod(getPivotPosition(), 1.0);
