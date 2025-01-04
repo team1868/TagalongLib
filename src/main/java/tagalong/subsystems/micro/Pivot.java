@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
+import tagalong.measurements.Angle;
 import tagalong.subsystems.micro.confs.PivotConf;
 
 /**
@@ -71,8 +72,8 @@ public class Pivot extends Microsystem {
    */
   public final double _minPositionRot, _maxPositionRot;
   /**
-   * Maximum velocity of the pivot in rollers per second,
-   * Maximum acceleration of the rollers in rotations per second squared
+   * Maximum velocity of the pivot in rotations per second,
+   * Maximum acceleration of the pivot in rotations per second squared
    */
   public final double _maxVelocityRPS, _maxAccelerationRPS2;
   /**
@@ -80,7 +81,7 @@ public class Pivot extends Microsystem {
    */
   public final double _profileTargetOffset;
 
-  /* -------- Control: controllers and utilities -------- */
+  /* -------- Control: controller and utilities -------- */
   /**
    * Feedforward model for the pivot
    */
@@ -430,6 +431,68 @@ public class Pivot extends Microsystem {
    */
   public double placePivotInClosestRot(double scopeReferenceRot, double newAngleRot) {
     return AlgebraicUtils.placeInScopeRot(scopeReferenceRot, newAngleRot);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   */
+  public void setPivotProfile(Angle goalPosition, double goalVelocityRPS, double maxVelocityRPS) {
+    setPivotProfile(goalPosition.getRotations(), goalVelocityRPS, maxVelocityRPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   * @param maxAccelerationRPS2 maximum acceleration in rotations per second squared
+   */
+  public void setPivotProfile(
+      Angle goalPosition, double goalVelocityRPS, double maxVelocityRPS, double maxAccelerationRPS2
+  ) {
+    setPivotProfile(
+        goalPosition.getRotations(), goalVelocityRPS, maxVelocityRPS, maxAccelerationRPS2
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   * @param maxAccelerationRPS2 maximum acceleration in rotations per second squared
+   * @param setCurrentState     True if the profiles current state should base itself off sensor
+   *     values rather than continue from the existing state
+   */
+  public void setPivotProfile(
+      Angle goalPosition,
+      double goalVelocityRPS,
+      double maxVelocityRPS,
+      double maxAccelerationRPS2,
+      boolean setCurrentState
+  ) {
+    setPivotProfile(
+        goalPosition.getRotations(),
+        goalVelocityRPS,
+        maxVelocityRPS,
+        maxAccelerationRPS2,
+        setCurrentState
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPositionRot goal position in rotations
+   */
+  public void setPivotProfile(double goalPositionRot) {
+    setPivotProfile(goalPositionRot, 0.0);
   }
 
   /**
