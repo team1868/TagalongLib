@@ -305,12 +305,12 @@ public class Elevator extends Microsystem {
 
     if (_isFFTuningMicro) {
       _elevatorFF = new ElevatorFeedforward(
-          _KSEntry.getDouble(_elevatorFF.ks),
-          _KGEntry.getDouble(_elevatorFF.kg),
-          _KVEntry.getDouble(_elevatorFF.kv),
-          _KAEntry.getDouble(_elevatorFF.ka)
+          _KSEntry.getDouble(_elevatorFF.getKs()),
+          _KGEntry.getDouble(_elevatorFF.getKg()),
+          _KVEntry.getDouble(_elevatorFF.getKv()),
+          _KAEntry.getDouble(_elevatorFF.getKa())
       );
-      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_elevatorFF.ks));
+      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_elevatorFF.getKs()));
     }
   }
 
@@ -379,7 +379,7 @@ public class Elevator extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-    _elevatorSim.setInputVoltage(_primaryMotor.getMotorVoltage().getValue());
+    _elevatorSim.setInputVoltage(_primaryMotor.getMotorVoltage().getValueAsDouble());
     _elevatorSim.update(TagalongConfiguration.LOOP_PERIOD_S);
 
     double simAccelMPS2 = (_elevatorSim.getVelocityMetersPerSecond() - _simVelocityMPS)

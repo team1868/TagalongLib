@@ -8,6 +8,7 @@ package tagalong.subsystems.micro;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -128,11 +129,11 @@ public class Roller extends Microsystem {
 
     if (_isFFTuningMicro) {
       _rollerFF = new SimpleMotorFeedforward(
-          _KSEntry.getDouble(_rollerFF.ks),
-          _KVEntry.getDouble(_rollerFF.kv),
-          _KAEntry.getDouble(_rollerFF.ka)
+          _KSEntry.getDouble(_rollerFF.getKs()),
+          _KVEntry.getDouble(_rollerFF.getKv()),
+          _KAEntry.getDouble(_rollerFF.getKa())
       );
-      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_rollerFF.ks));
+      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_rollerFF.getKs()));
     }
   }
 
@@ -166,11 +167,11 @@ public class Roller extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-    _rollerSim = new FlywheelSim(
-        _rollerConf.motorTypes[0].simSupplier.apply(_rollerConf.numMotors),
-        _motorToMechRatio,
-        _rollerConf.rollerMOI
-    );
+    var dcMotor = 
+    _rollerConf.motorTypes[0].simSupplier.apply(_rollerConf.numMotors);
+    _rollerSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(dcMotor,
+      _rollerConf.rollerMOI,
+      _motorToMechRatio), dcMotor, null);
     _mechanism = new Mechanism2d(50, 50);
     SmartDashboard.putData("SIM: " + _rollerConf.name, _mechanism);
 
