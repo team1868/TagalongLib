@@ -395,8 +395,7 @@ public class Pivot extends Microsystem {
             // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
             .withVelocity(rps)
             .withFeedForward(
-                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps), 0.0)
-                       : 0.0
+                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
             )
     );
   }

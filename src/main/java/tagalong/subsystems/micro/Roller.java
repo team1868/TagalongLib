@@ -167,11 +167,12 @@ public class Roller extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-    var dcMotor = 
-    _rollerConf.motorTypes[0].simSupplier.apply(_rollerConf.numMotors);
-    _rollerSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(dcMotor,
-      _rollerConf.rollerMOI,
-      _motorToMechRatio), dcMotor, null);
+    var dcMotor = _rollerConf.motorTypes[0].simSupplier.apply(_rollerConf.numMotors);
+    _rollerSim = new FlywheelSim(
+        LinearSystemId.createFlywheelSystem(dcMotor, _rollerConf.rollerMOI, _motorToMechRatio),
+        dcMotor,
+        null
+    );
     _mechanism = new Mechanism2d(50, 50);
     SmartDashboard.putData("SIM: " + _rollerConf.name, _mechanism);
 
@@ -288,14 +289,9 @@ public class Roller extends Microsystem {
         _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
 
     // Control and FeedForward based on mechanism rotations rather than motor rotations
-    _primaryMotor.setControl(
-        _requestedPositionVoltage.withPosition(rollerRotToMotor(nextState.position))
-            .withFeedForward(_rollerFF.calculate(
-                nextState.velocity,
-                (nextState.velocity - _curState.velocity) / TagalongConfiguration.LOOP_PERIOD_S
-
-            ))
-    );
+    _primaryMotor.setControl(_requestedPositionVoltage
+                                 .withPosition(rollerRotToMotor(nextState.position))
+                                 .withFeedForward(_rollerFF.calculate(nextState.velocity)));
 
     if (_isShuffleboardMicro) {
       _targetPositionEntry.setDouble(nextState.position);

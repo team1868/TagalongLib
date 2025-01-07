@@ -158,11 +158,7 @@ public class Elevator extends Microsystem {
     _primaryMotor.setControl(_requestedPositionVoltage
                                  .withPosition(metersToMotor(nextState.position))
                                  // State is in meters, so the FF can handle the units directly
-                                 .withFeedForward(_elevatorFF.calculate(
-                                     nextState.velocity,
-                                     (nextState.velocity - _curState.velocity)
-                                         / TagalongConfiguration.LOOP_PERIOD_S
-                                 )));
+                                 .withFeedForward(_elevatorFF.calculate(nextState.velocity)));
 
     if (_isShuffleboardMicro) {
       _targetPositionEntry.setDouble(nextState.position);
@@ -283,7 +279,7 @@ public class Elevator extends Microsystem {
 
     setFollowProfile(false);
     _primaryMotor.setControl(_requestedVelocityVoltage.withVelocity(metersToMotor(mps))
-                                 .withFeedForward(withFF ? _elevatorFF.calculate(mps, 0.0) : 0.0));
+                                 .withFeedForward(withFF ? _elevatorFF.calculate(mps) : 0.0));
   }
 
   /**
