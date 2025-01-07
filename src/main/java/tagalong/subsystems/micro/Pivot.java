@@ -208,7 +208,7 @@ public class Pivot extends Microsystem {
       _primaryMotor.set(0.0);
     } else if (_isFFTuningMicro && _trapProfile.isFinished(_profileTimer.get())) {
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(
-          _pivotFF.ks + _pivotFF.ks * Math.cos(getFFPositionRad())
+          _pivotFF.getKs() + _pivotFF.getKs() * Math.cos(getFFPositionRad())
       ));
     }
 
@@ -238,13 +238,13 @@ public class Pivot extends Microsystem {
 
     if (_isFFTuningMicro) {
       _pivotFF = new ArmFeedforward(
-          _KSEntry.getDouble(_pivotFF.ks),
-          _KGEntry.getDouble(_pivotFF.kg),
-          _KVEntry.getDouble(_pivotFF.kv),
-          _KAEntry.getDouble(_pivotFF.ka)
+          _KSEntry.getDouble(_pivotFF.getKs()),
+          _KGEntry.getDouble(_pivotFF.getKg()),
+          _KVEntry.getDouble(_pivotFF.getKv()),
+          _KAEntry.getDouble(_pivotFF.getKa())
       );
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(
-          _pivotFF.ks + _pivotFF.ks * Math.cos(getFFPositionRad())
+          _pivotFF.getKs() + _pivotFF.getKs() * Math.cos(getFFPositionRad())
       ));
     }
   }
@@ -395,8 +395,7 @@ public class Pivot extends Microsystem {
             // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
             .withVelocity(rps)
             .withFeedForward(
-                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps), 0.0)
-                       : 0.0
+                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
             )
     );
   }

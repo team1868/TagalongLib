@@ -9,7 +9,6 @@ package tagalong.subsystems.micro.confs;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -263,15 +262,14 @@ public class PivotConf extends MicrosystemConf {
 
     MagnetSensorConfigs magnetSensorConfigs =
         new MagnetSensorConfigs()
-            .withAbsoluteSensorRange(
-                encoderConfigZeroToOne ? AbsoluteSensorRangeValue.Unsigned_0To1
-                                       : AbsoluteSensorRangeValue.Signed_PlusMinusHalf
-            )
             .withMagnetOffset(encoderConfigMagnetOffsetValue)
             .withSensorDirection(
                 encoderConfigClockwisePositive ? SensorDirectionValue.Clockwise_Positive
                                                : SensorDirectionValue.CounterClockwise_Positive
             );
+            magnetSensorConfigs.AbsoluteSensorDiscontinuityPoint = 
+                encoderConfigZeroToOne ? 1
+                                       : 0;
     this.encoderConfig = new CANcoderConfiguration().withMagnetSensor(magnetSensorConfigs);
 
     this.rotationalMin = rotationalLimitsUnit.convertX(rotationalMin, this.rotationalLimitUnit);
