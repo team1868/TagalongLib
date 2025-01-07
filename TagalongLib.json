@@ -1,7 +1,7 @@
 {
   "fileName": "TagalongLib.json",
   "name": "TagalongLib",
-  "version": "2025.11.0105",
+  "version": "2025.11.0106",
   "frcYear": "2025",
   "uuid": "32b609c1-86c7-4c61-a0f7-7debd9d77017",
   "mavenUrls": ["https://team1868.github.io/TagalongLib/"],
@@ -10,7 +10,7 @@
     {
       "groupId": "com.tagalong.lib",
       "artifactId": "tagalonglib-java",
-      "version": "2025.11.0105"
+      "version": "2025.11.0106"
     }
   ],
   "jniDependencies": [],
