@@ -582,10 +582,10 @@ public class Pivot extends Microsystem {
         _motorToEncoderRatio * _encoderToPivotRatio,
         _pivotConf.pivotMOI,
         _pivotConf.pivotLengthM,
-        Units.degreesToRadians(_minPositionRot),
-        Units.degreesToRadians(_maxPositionRot),
+        Units.rotationsToRadians(_minPositionRot),
+        Units.rotationsToRadians(_maxPositionRot),
         true,
-        Units.degreesToRadians(0)
+        Units.rotationsToRadians(0)
     );
 
     _mechanism = new Mechanism2d(50, 50);
