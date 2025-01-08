@@ -41,6 +41,9 @@ public class FlywheelConf extends RollerConf {
    * @param simSlot0                      simulated PID slot 0 configuration
    * @param simSlot1                      simulated PID slot 1 configuration
    * @param simSlot2                      simulated PID slot 2 configuration
+   * @param mech2dDim                     dimensions of mechanical system
+   * @param rootX                         sim root x coordinate
+   * @param rootY                         sim root y coordinate
    * @param simNumLigaments               number of simulated ligaments used
    * @param rollerMOI                     moment of inertia for the roller
    */
@@ -70,6 +73,9 @@ public class FlywheelConf extends RollerConf {
       PIDSGVAConstants simSlot0,
       PIDSGVAConstants simSlot1,
       PIDSGVAConstants simSlot2,
+      double mech2dDim,
+      double rootX,
+      double rootY,
       int simNumLigaments,
       double rollerMOI
 
@@ -104,6 +110,9 @@ public class FlywheelConf extends RollerConf {
         simSlot0,
         simSlot1,
         simSlot2,
+        mech2dDim,
+        rootX,
+        rootY,
         simNumLigaments,
         rollerMOI
     );

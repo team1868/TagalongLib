@@ -61,7 +61,15 @@ public class ElevatorConf extends MicrosystemConf {
   /**
    * Dimension of the mechanical system
    */
-  public final int mech2dDim;
+  public final double mech2dDim;
+  /**
+   * Sim root x coordinate
+   */
+  public final double rootX;
+  /**
+   * Sim root y coordinate
+   */
+  public final double rootY;
   /**
    * Length of the line
    */
@@ -119,6 +127,8 @@ public class ElevatorConf extends MicrosystemConf {
    * @param carriageMassUnit              units for the carriage mass
    * @param carriageMassValue             value of the carriage mass
    * @param mech2dDim                     dimensions of mechanical system
+   * @param rootX                         sim root x coordinate
+   * @param rootY                         sim root y coordinate
    * @param lineLength                    length of the line
    * @param angle                         angle of the elevator
    * @param simSlot0                      simulated PID slot 0 configuration
@@ -156,7 +166,9 @@ public class ElevatorConf extends MicrosystemConf {
       PIDSGVAConstants slot2,
       MassUnits carriageMassUnit,
       double carriageMassValue,
-      int mech2dDim,
+      double mech2dDim,
+      double rootX,
+      double rootY,
       int lineLength,
       int angle,
       PIDSGVAConstants simSlot0,
@@ -203,9 +215,10 @@ public class ElevatorConf extends MicrosystemConf {
 
     this.carriageMassValue = carriageMassUnit.convertX(carriageMassValue, this.carriageMassUnit);
     this.mech2dDim = mech2dDim;
+    this.rootX = rootX;
+    this.rootY = rootY;
     this.lineLength = lineLength;
     this.angle = angle;
-
     this.feedForward = IterativeRobotBase.isReal() ? feedForward.getElevatorFeedforward()
                                                    : simFeedForward.getElevatorFeedforward();
   }

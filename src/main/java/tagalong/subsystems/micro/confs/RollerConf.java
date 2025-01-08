@@ -23,6 +23,18 @@ import tagalong.units.VelocityUnits;
  */
 public class RollerConf extends MicrosystemConf {
   /**
+   * Dimension of the mechanical system
+   */
+  public final double mech2dDim;
+  /**
+   * Sim root x coordinate
+   */
+  public final double rootX;
+  /**
+   * Sim root y coordinate
+   */
+  public final double rootY;
+  /**
    * Number of simulated ligaments used
    */
   public final int simNumLigaments;
@@ -62,6 +74,9 @@ public class RollerConf extends MicrosystemConf {
    * @param simSlot0                      simulated PID slot 0 configuration
    * @param simSlot1                      simulated PID slot 1 configuration
    * @param simSlot2                      simulated PID slot 2 configuration
+   * @param mech2dDim                     dimensions of mechanical system
+   * @param rootX                         sim root x coordinate
+   * @param rootY                         sim root y coordinate
    * @param simNumLigaments               number of simulated ligaments used
    * @param rollerMOI                     moment of inertia for the roller
    */
@@ -91,6 +106,9 @@ public class RollerConf extends MicrosystemConf {
       PIDSGVAConstants simSlot0,
       PIDSGVAConstants simSlot1,
       PIDSGVAConstants simSlot2,
+      double mech2dDim,
+      double rootX,
+      double rootY,
       int simNumLigaments,
       double rollerMOI
   ) {
@@ -123,7 +141,9 @@ public class RollerConf extends MicrosystemConf {
         simSlot1,
         simSlot2
     );
-
+    this.mech2dDim = mech2dDim;
+    this.rootX = rootX;
+    this.rootY = rootY;
     this.simNumLigaments = simNumLigaments;
     this.rollerMOI = rollerMOI;
     this.feedForward = IterativeRobotBase.isReal() ? feedForward.getSimpleMotorFeedforward()

@@ -106,6 +106,18 @@ public class PivotConf extends MicrosystemConf {
 
   /* -------- Simulation Specific Control -------- */
   /**
+   * Dimension of the mechanical system
+   */
+  public final double mech2dDim;
+  /**
+   * Sim root x coordinate
+   */
+  public final double rootX;
+  /**
+   * Sim root y coordinate
+   */
+  public final double rootY;
+  /**
    * Moment of inertia for the pivot
    */
   public final double pivotMOI;
@@ -171,6 +183,9 @@ public class PivotConf extends MicrosystemConf {
    * @param ffOffsetValue                   value of the feedforward offset
    * @param profileOffsetUnit               unit of the profile offset
    * @param profileOffsetValue              value of the profile offset
+   * @param mech2dDim                       dimensions of mechanical system
+   * @param rootX                           sim root x coordinate
+   * @param rootY                           sim root y coordinate
    * @param pivotMOI                        moment of inertia for the pivot
    * @param pivotLengthM                    length of the pivot in meters
    */
@@ -216,6 +231,9 @@ public class PivotConf extends MicrosystemConf {
       double ffOffsetValue,
       DistanceUnits profileOffsetUnit,
       double profileOffsetValue,
+      double mech2dDim,
+      double rootX,
+      double rootY,
       double pivotMOI,
       double pivotLengthM
   ) {
@@ -267,9 +285,7 @@ public class PivotConf extends MicrosystemConf {
                 encoderConfigClockwisePositive ? SensorDirectionValue.Clockwise_Positive
                                                : SensorDirectionValue.CounterClockwise_Positive
             );
-            magnetSensorConfigs.AbsoluteSensorDiscontinuityPoint = 
-                encoderConfigZeroToOne ? 1
-                                       : 0;
+    magnetSensorConfigs.AbsoluteSensorDiscontinuityPoint = encoderConfigZeroToOne ? 1 : 0;
     this.encoderConfig = new CANcoderConfiguration().withMagnetSensor(magnetSensorConfigs);
 
     this.rotationalMin = rotationalLimitsUnit.convertX(rotationalMin, this.rotationalLimitUnit);
@@ -281,6 +297,9 @@ public class PivotConf extends MicrosystemConf {
     this.profileOffsetValue =
         profileOffsetUnit.convertX(profileOffsetValue, this.profileOffsetUnit);
 
+    this.mech2dDim = mech2dDim;
+    this.rootX = rootX;
+    this.rootY = rootY;
     this.pivotMOI = pivotMOI;
     this.pivotLengthM = pivotLengthM;
   }
