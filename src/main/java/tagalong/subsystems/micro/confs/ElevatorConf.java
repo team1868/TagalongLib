@@ -73,11 +73,11 @@ public class ElevatorConf extends MicrosystemConf {
   /**
    * Length of the line
    */
-  public final int lineLength;
+  public final double lineLength;
   /**
    * Angle of the elevator
    */
-  public final int angle;
+  public final double angle;
   /**
    *
    */
@@ -169,8 +169,8 @@ public class ElevatorConf extends MicrosystemConf {
       double mech2dDim,
       double rootX,
       double rootY,
-      int lineLength,
-      int angle,
+      double lineLength,
+      double angle,
       PIDSGVAConstants simSlot0,
       PIDSGVAConstants simSlot1,
       PIDSGVAConstants simSlot2,
