@@ -1,5 +1,6 @@
 package tagalong.logging;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import tagalong.subsystems.micro.Pivot;
 
 public class PivotIOTalonFX implements PivotIO {
@@ -9,6 +10,7 @@ public class PivotIOTalonFX implements PivotIO {
   }
   @Override
   public void updateInputs(PivotIOInputs inputs) {
+    // TODO refresh and set update frequency
     inputs.pivotPositionRot = _pivot.getPivotPosition();
     inputs.pivotVelocityRPS = _pivot.getPivotVelocity();
     inputs.pivotAppliedVolts = _pivot.getPrimaryMotor().getMotorVoltage().getValueAsDouble();

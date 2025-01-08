@@ -25,7 +25,7 @@ public class TagalongConfiguration {
    */
   public static double LOOP_PERIOD_S = TimedRobot.kDefaultPeriod;
 
-  public static final boolean IS_REPLAY = false;
+  public static boolean IS_REPLAY = false;
 
   /**
    * Add microsystem names to shuffleboardMicrosystems list if they should be

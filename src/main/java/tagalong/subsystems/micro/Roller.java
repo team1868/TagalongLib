@@ -428,7 +428,7 @@ public class Roller extends Microsystem {
 
     setFollowProfile(false);
     _primaryMotor.setControl(_requestedVelocityVoltage.withVelocity(rollerRotToMotor(rps))
-                                 .withFeedForward(withFF ? _rollerFF.calculate(rps, 0.0) : 0.0));
+                                 .withFeedForward(withFF ? _rollerFF.calculate(rps) : 0.0));
   }
 
   /**

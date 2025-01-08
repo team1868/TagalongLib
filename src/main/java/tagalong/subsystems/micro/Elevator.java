@@ -349,13 +349,12 @@ public class Elevator extends Microsystem {
         0
     );
     _primaryMotorSim = _primaryMotor.getSimState();
-    _mechanism = new Mechanism2d(_elevatorConf.mech2dDim, _elevatorConf.mech2dDim);
-    _root =
-        _mechanism.getRoot(_elevatorConf.name, _elevatorConf.lineLength, _elevatorConf.lineLength);
+    _mechanism = new Mechanism2d(50, 50);
+    _root = _mechanism.getRoot(_elevatorConf.name, 25, 25);
     _elevatorBaseStage = _root.append(new MechanismLigament2d(
         "BaseStage",
         _elevatorConf.lineLength,
-        180 + _elevatorConf.angle,
+        _elevatorConf.angle,
         6,
         new Color8Bit(Color.kAliceBlue)
     ));
@@ -375,6 +374,11 @@ public class Elevator extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
+    // System.out.println(
+    //     "a;skdljfalkdjsflasjdfalksdfhj"
+    //     + "motor voltage" + _primaryMotor.getMotorVoltage().getValueAsDouble() + "power"
+    //     + _primaryMotor.get()
+    // );
     _elevatorSim.setInputVoltage(_primaryMotor.getMotorVoltage().getValueAsDouble());
     _elevatorSim.update(TagalongConfiguration.LOOP_PERIOD_S);
 
@@ -394,8 +398,11 @@ public class Elevator extends Microsystem {
         metersToMotor(_primaryMotorInverted ? (-1 * simAccelMPS2) : simAccelMPS2)
     );
     _elevatorStage1.setLength(
-        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM)
+        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM
+        ) // TODO seems wrong
     );
+    // System.out.println("sim pos" + _elevatorSim.getPositionMeters());
+
     _primaryMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(_elevatorSim.getCurrentDrawAmps())

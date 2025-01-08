@@ -24,7 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.littletonrobotics.junction.Logger;
 import tagalong.TagalongConfiguration;
+import tagalong.logging.PivotIO;
+import tagalong.logging.PivotIOInputsAutoLogged;
+import tagalong.logging.PivotIOTalonFX;
 import tagalong.math.AlgebraicUtils;
 import tagalong.subsystems.micro.confs.PivotConf;
 
@@ -327,13 +331,9 @@ public class Pivot extends Microsystem {
         _requestedPositionVoltage
             .withPosition(nextState.position)
             // FeedForward must know the pivot rotation and other arguments in radians
-            .withFeedForward(_pivotFF.calculate(
-                getFFPositionRad(),
-                Units.rotationsToRadians(nextState.velocity),
-                Units.rotationsToRadians(
-                    (nextState.velocity - _curState.velocity) / TagalongConfiguration.LOOP_PERIOD_S
-                )
-            ))
+            .withFeedForward(
+                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
+            )
     );
 
     if (_isShuffleboardMicro) {
@@ -572,6 +572,7 @@ public class Pivot extends Microsystem {
   /**
    * Initializes the pivot simulation
    */
+  @Override
   public void simulationInit() {
     if (_isMicrosystemDisabled) {
       return;
@@ -582,10 +583,10 @@ public class Pivot extends Microsystem {
         _motorToEncoderRatio * _encoderToPivotRatio,
         _pivotConf.pivotMOI,
         _pivotConf.pivotLengthM,
-        Units.degreesToRadians(_minPositionRot),
-        Units.degreesToRadians(_maxPositionRot),
+        Units.rotationsToRadians(_minPositionRot),
+        Units.rotationsToRadians(_maxPositionRot),
         true,
-        Units.degreesToRadians(0)
+        Units.rotationsToRadians(0)
     );
 
     _mechanism = new Mechanism2d(50, 50);
