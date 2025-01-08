@@ -328,11 +328,8 @@ public class Pivot extends Microsystem {
             .withPosition(nextState.position)
             // FeedForward must know the pivot rotation and other arguments in radians
             .withFeedForward(_pivotFF.calculate(
-                getFFPositionRad(),
-                Units.rotationsToRadians(nextState.velocity),
-                Units.rotationsToRadians(
-                    (nextState.velocity - _curState.velocity) / TagalongConfiguration.LOOP_PERIOD_S
-                )
+                getFFPositionRad(), Units.rotationsToRadians(nextState.velocity)
+
             ))
     );
 
