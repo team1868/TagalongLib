@@ -173,10 +173,10 @@ public class Roller extends Microsystem {
         dcMotor,
         null
     );
-    _mechanism = new Mechanism2d(50, 50);
+    _mechanism = new Mechanism2d(_rollerConf.mech2dDim, _rollerConf.mech2dDim);
     SmartDashboard.putData("SIM: " + _rollerConf.name, _mechanism);
 
-    _root = _mechanism.getRoot(_rollerConf.name, 25, 25);
+    _root = _mechanism.getRoot(_rollerConf.name, _rollerConf.rootX, _rollerConf.rootY);
     for (int i = 1; i <= _rollerConf.simNumLigaments; i++) {
       MechanismLigament2d ligament = new MechanismLigament2d(
           _rollerConf.name + " " + i, 10, i * (360 / _rollerConf.simNumLigaments)

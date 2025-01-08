@@ -589,10 +589,10 @@ public class Pivot extends Microsystem {
         Units.rotationsToRadians(0)
     );
 
-    _mechanism = new Mechanism2d(50, 50);
+    _mechanism = new Mechanism2d(_pivotConf.mech2dDim, _pivotConf.mech2dDim);
     SmartDashboard.putData("SIM: " + _pivotConf.name, _mechanism);
 
-    _root = _mechanism.getRoot(_pivotConf.name, 25, 25);
+    _root = _mechanism.getRoot(_pivotConf.name, _pivotConf.rootX, _pivotConf.rootY);
     _ligament = new MechanismLigament2d(_pivotConf.name, 10.0, 180);
     _root.append(_ligament);
     _ligament.setColor(new Color8Bit(255, 255, 255));
