@@ -392,9 +392,7 @@ public class Elevator extends Microsystem {
     _primaryMotorSim.setRotorAcceleration(
         metersToMotor(_primaryMotorInverted ? (-1 * simAccelMPS2) : simAccelMPS2)
     );
-    _elevatorStage1.setLength(
-        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM)
-    );
+    _elevatorStage1.setLength(_elevatorSim.getPositionMeters());
     _primaryMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(_elevatorSim.getCurrentDrawAmps())
