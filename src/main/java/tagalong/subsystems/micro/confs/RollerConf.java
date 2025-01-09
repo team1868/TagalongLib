@@ -27,6 +27,10 @@ public class RollerConf extends MicrosystemConf {
    */
   public final double mech2dDim;
   /**
+   * Sim root name
+   */
+  public final String rootName;
+  /**
    * Sim root x coordinate
    */
   public final double rootX;
@@ -75,6 +79,7 @@ public class RollerConf extends MicrosystemConf {
    * @param simSlot1                      simulated PID slot 1 configuration
    * @param simSlot2                      simulated PID slot 2 configuration
    * @param mech2dDim                     dimensions of mechanical system
+   * @param rootName                      sim root name
    * @param rootX                         sim root x coordinate
    * @param rootY                         sim root y coordinate
    * @param simNumLigaments               number of simulated ligaments used
@@ -107,6 +112,7 @@ public class RollerConf extends MicrosystemConf {
       PIDSGVAConstants simSlot1,
       PIDSGVAConstants simSlot2,
       double mech2dDim,
+      String rootName,
       double rootX,
       double rootY,
       int simNumLigaments,
@@ -142,6 +148,7 @@ public class RollerConf extends MicrosystemConf {
         simSlot2
     );
     this.mech2dDim = mech2dDim;
+    this.rootName = rootName;
     this.rootX = rootX;
     this.rootY = rootY;
     this.simNumLigaments = simNumLigaments;

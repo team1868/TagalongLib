@@ -63,6 +63,10 @@ public class ElevatorConf extends MicrosystemConf {
    */
   public final double mech2dDim;
   /**
+   * Sim root name
+   */
+  public final String rootName;
+  /**
    * Sim root x coordinate
    */
   public final double rootX;
@@ -129,6 +133,7 @@ public class ElevatorConf extends MicrosystemConf {
    * @param mech2dDim                     dimensions of mechanical system
    * @param rootX                         sim root x coordinate
    * @param rootY                         sim root y coordinate
+   * @param rootName                      sim root name
    * @param lineLength                    length of the line
    * @param angle                         angle of the elevator
    * @param simSlot0                      simulated PID slot 0 configuration
@@ -167,6 +172,7 @@ public class ElevatorConf extends MicrosystemConf {
       MassUnits carriageMassUnit,
       double carriageMassValue,
       double mech2dDim,
+      String rootName,
       double rootX,
       double rootY,
       double lineLength,
@@ -215,6 +221,7 @@ public class ElevatorConf extends MicrosystemConf {
 
     this.carriageMassValue = carriageMassUnit.convertX(carriageMassValue, this.carriageMassUnit);
     this.mech2dDim = mech2dDim;
+    this.rootName = rootName;
     this.rootX = rootX;
     this.rootY = rootY;
     this.lineLength = lineLength;

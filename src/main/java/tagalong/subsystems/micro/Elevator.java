@@ -350,7 +350,7 @@ public class Elevator extends Microsystem {
     );
     _primaryMotorSim = _primaryMotor.getSimState();
     _mechanism = new Mechanism2d(_elevatorConf.mech2dDim, _elevatorConf.mech2dDim);
-    _root = _mechanism.getRoot(_elevatorConf.name, _elevatorConf.rootX, _elevatorConf.rootY);
+    _root = _mechanism.getRoot(_elevatorConf.rootName, _elevatorConf.rootX, _elevatorConf.rootY);
     _elevatorBaseStage = _root.append(new MechanismLigament2d(
         "BaseStage",
         _elevatorConf.lineLength,
