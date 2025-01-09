@@ -374,11 +374,6 @@ public class Elevator extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-    // System.out.println(
-    //     "a;skdljfalkdjsflasjdfalksdfhj"
-    //     + "motor voltage" + _primaryMotor.getMotorVoltage().getValueAsDouble() + "power"
-    //     + _primaryMotor.get()
-    // );
     _elevatorSim.setInputVoltage(_primaryMotor.getMotorVoltage().getValueAsDouble());
     _elevatorSim.update(TagalongConfiguration.LOOP_PERIOD_S);
 
