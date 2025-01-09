@@ -110,6 +110,10 @@ public class PivotConf extends MicrosystemConf {
    */
   public final double mech2dDim;
   /**
+   * Sim root name
+   */
+  public final String rootName;
+  /**
    * Sim root x coordinate
    */
   public final double rootX;
@@ -184,6 +188,7 @@ public class PivotConf extends MicrosystemConf {
    * @param profileOffsetUnit               unit of the profile offset
    * @param profileOffsetValue              value of the profile offset
    * @param mech2dDim                       dimensions of mechanical system
+   * @param rootName                        sim root name
    * @param rootX                           sim root x coordinate
    * @param rootY                           sim root y coordinate
    * @param pivotMOI                        moment of inertia for the pivot
@@ -232,6 +237,7 @@ public class PivotConf extends MicrosystemConf {
       DistanceUnits profileOffsetUnit,
       double profileOffsetValue,
       double mech2dDim,
+      String rootName,
       double rootX,
       double rootY,
       double pivotMOI,
@@ -298,6 +304,7 @@ public class PivotConf extends MicrosystemConf {
         profileOffsetUnit.convertX(profileOffsetValue, this.profileOffsetUnit);
 
     this.mech2dDim = mech2dDim;
+    this.rootName = rootName;
     this.rootX = rootX;
     this.rootY = rootY;
     this.pivotMOI = pivotMOI;

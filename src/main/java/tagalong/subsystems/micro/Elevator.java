@@ -350,7 +350,7 @@ public class Elevator extends Microsystem {
     );
     _primaryMotorSim = _primaryMotor.getSimState();
     _mechanism = new Mechanism2d(_elevatorConf.mech2dDim, _elevatorConf.mech2dDim);
-    _root = _mechanism.getRoot(_elevatorConf.name, _elevatorConf.rootX, _elevatorConf.rootY);
+    _root = _mechanism.getRoot(_elevatorConf.rootName, _elevatorConf.rootX, _elevatorConf.rootY);
     _elevatorBaseStage = _root.append(new MechanismLigament2d(
         "BaseStage",
         _elevatorConf.lineLength,
@@ -398,8 +398,6 @@ public class Elevator extends Microsystem {
         metersToMotor(_primaryMotorInverted ? (-1 * simAccelMPS2) : simAccelMPS2)
     );
     _elevatorStage1.setLength(_elevatorSim.getPositionMeters());
-    // System.out.println("sim pos" + _elevatorSim.getPositionMeters());
-
     _primaryMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(_elevatorSim.getCurrentDrawAmps())
