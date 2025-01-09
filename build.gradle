@@ -40,6 +40,9 @@ repositories {
     maven {
         url 'https://SleipnirGroup.github.io/ChoreoLib/dep'
     }
+    maven {
+        url 'https://frcmaven.wpi.edu/artifactory/littletonrobotics-mvn-release/'
+    }
 }
 if (project.hasProperty('releaseMode')) {
     wpilibRepositories.addAllReleaseRepositories(project)
@@ -55,6 +58,7 @@ dependencies {
     implementation group: 'com.ctre.phoenix6', name: 'wpiapi-java', version: '25.1.0'
     // implementation group: 'com.ctre.phoenix', name: 'api-java', version: '5.33.0'
     // implementation group: 'com.ctre.phoenix', name: 'wpiapi-java', version: '5.33.0'
+    implementation group: 'org.littletonrobotics.akit', name: 'akit-java', version: '4.0.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
     implementation group: 'edu.wpi.first.wpilibj', name: 'wpilibj-java', version: '2025.1.1'
     implementation group: 'edu.wpi.first.wpiutil', name: 'wpiutil-java', version: '2025.1.1'
@@ -64,6 +68,8 @@ dependencies {
     implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-java', version: '2025.1.1'
     implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-jni', version: '2025.1.1'
     implementation group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '2025.1.1'
+
+    implementation 'us.hebi.quickbuf:quickbuf-runtime:1.4'
 
     api "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
     api "com.fasterxml.jackson.core:jackson-core:2.15.2"
@@ -79,7 +85,7 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.10.1'
-    
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 
