@@ -398,8 +398,7 @@ public class Elevator extends Microsystem {
         metersToMotor(_primaryMotorInverted ? (-1 * simAccelMPS2) : simAccelMPS2)
     );
     _elevatorStage1.setLength(
-        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM
-        ) // TODO seems wrong
+        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM)
     );
     // System.out.println("sim pos" + _elevatorSim.getPositionMeters());
 

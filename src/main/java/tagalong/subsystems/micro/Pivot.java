@@ -593,7 +593,7 @@ public class Pivot extends Microsystem {
     SmartDashboard.putData("SIM: " + _pivotConf.name, _mechanism);
 
     _root = _mechanism.getRoot(_pivotConf.name, _pivotConf.rootX, _pivotConf.rootY);
-    _ligament = new MechanismLigament2d(_pivotConf.name, 10.0, 180);
+    _ligament = new MechanismLigament2d(_pivotConf.name, _pivotConf.pivotLengthM, 0.0);
     _root.append(_ligament);
     _ligament.setColor(new Color8Bit(255, 255, 255));
 
