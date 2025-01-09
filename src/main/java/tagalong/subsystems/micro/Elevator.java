@@ -354,15 +354,15 @@ public class Elevator extends Microsystem {
     _elevatorBaseStage = _root.append(new MechanismLigament2d(
         "BaseStage",
         _elevatorConf.lineLength,
-        180.0 + _elevatorConf.angle,
-        6,
+        _elevatorConf.angle,
+        6.0,
         new Color8Bit(Color.kAliceBlue)
     ));
     _elevatorStage1 = _root.append(new MechanismLigament2d(
         "Stage1",
         _elevatorConf.lineLength,
         _elevatorConf.angle,
-        6,
+        6.0,
         new Color8Bit(Color.kLightSalmon)
     ));
     SmartDashboard.putData("SIM: " + _conf.name, _mechanism);
