@@ -354,15 +354,15 @@ public class Elevator extends Microsystem {
     _elevatorBaseStage = _root.append(new MechanismLigament2d(
         "BaseStage",
         _elevatorConf.lineLength,
-        180.0 + _elevatorConf.angle,
-        6,
+        _elevatorConf.angle,
+        6.0,
         new Color8Bit(Color.kAliceBlue)
     ));
     _elevatorStage1 = _root.append(new MechanismLigament2d(
         "Stage1",
         _elevatorConf.lineLength,
         _elevatorConf.angle,
-        6,
+        6.0,
         new Color8Bit(Color.kLightSalmon)
     ));
     SmartDashboard.putData("SIM: " + _conf.name, _mechanism);
@@ -397,9 +397,7 @@ public class Elevator extends Microsystem {
     _primaryMotorSim.setRotorAcceleration(
         metersToMotor(_primaryMotorInverted ? (-1 * simAccelMPS2) : simAccelMPS2)
     );
-    _elevatorStage1.setLength(
-        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM)
-    );
+    _elevatorStage1.setLength(_elevatorSim.getPositionMeters());
     // System.out.println("sim pos" + _elevatorSim.getPositionMeters());
 
     _primaryMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
