@@ -89,7 +89,7 @@ public class Roller extends Microsystem {
   /**
    * Roller ligaments
    */
-  private ArrayList<MechanismLigament2d> rollerLigament = new ArrayList<MechanismLigament2d>();
+  private ArrayList<MechanismLigament2d> _rollerLigaments = new ArrayList<MechanismLigament2d>();
 
   /**
    * Constructs a roller microsystem with the below configurations
@@ -181,7 +181,7 @@ public class Roller extends Microsystem {
       MechanismLigament2d ligament = new MechanismLigament2d(
           _rollerConf.name + " " + i, 10, i * (360 / _rollerConf.simNumLigaments)
       );
-      rollerLigament.add(ligament);
+      _rollerLigaments.add(ligament);
       _root.append(ligament);
 
       // FUTURE DEV: allow for explicit color configuration
@@ -208,7 +208,7 @@ public class Roller extends Microsystem {
     _simAccelRPM2 = (_simVeloRPM - prevSimVelo) * 60.0 / TagalongConfiguration.LOOP_PERIOD_S;
 
     for (int i = 1; i <= _rollerConf.simNumLigaments; i++) {
-      rollerLigament.get(i - 1).setAngle(
+      _rollerLigaments.get(i - 1).setAngle(
           Rotation2d.fromRotations(_simRotations + (i * (1.0 / _rollerConf.simNumLigaments)))
       );
     }
@@ -528,5 +528,14 @@ public class Roller extends Microsystem {
   public void holdCurrentPosition() {
     setRollerProfile(getRollerPosition(), 0.0);
     setFollowProfile(true);
+  }
+
+  /**
+   * Retrieves ligaments attached to roller Mechanism2d
+   *
+   * @return roller ligaments
+   */
+  public ArrayList<MechanismLigament2d> getRollerLigaments() {
+    return _rollerLigaments;
   }
 }

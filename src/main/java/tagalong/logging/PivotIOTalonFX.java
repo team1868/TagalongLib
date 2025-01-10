@@ -8,12 +8,32 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import tagalong.subsystems.micro.Pivot;
 
+/**
+ * Collection of pivot TalonFX data
+ */
 public class PivotIOTalonFX implements PivotIO {
+  /**
+   * Signal for pivot position in rotations
+   */
   private final StatusSignal<Angle> _pivotPosition;
+  /**
+   * Signal for pivot velocity in rotations per second
+   */
   private final StatusSignal<AngularVelocity> _pivotVelocity;
+  /**
+   * Signal for pivot applied (output) motor voltage
+   */
   private final StatusSignal<Voltage> _pivotAppliedVolts;
+  /**
+   * Signal for pivot current corresponding to the stator windings
+   */
   private final StatusSignal<Current> _pivotCurrentAmps;
 
+  /**
+   * Constructs a layer with the below pivot TalonFX data
+   *
+   * @param pivot microsystem
+   */
   public PivotIOTalonFX(Pivot pivot) {
     _pivotPosition = pivot.getPrimaryMotor().getPosition();
     _pivotVelocity = pivot.getPrimaryMotor().getVelocity();

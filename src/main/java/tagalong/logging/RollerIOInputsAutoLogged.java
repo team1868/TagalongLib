@@ -5,6 +5,9 @@ import java.lang.Override;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
+/**
+ * Logger for roller inputs
+ */
 public class RollerIOInputsAutoLogged
     extends RollerIO.RollerIOInputs implements LoggableInputs, Cloneable {
   @Override
@@ -23,6 +26,9 @@ public class RollerIOInputsAutoLogged
     rollerCurrentAmps = table.get("RollerCurrentAmps", rollerCurrentAmps);
   }
 
+  /**
+   * Returns a copy of RollerIOInputsAutoLogged
+   */
   public RollerIOInputsAutoLogged clone() {
     RollerIOInputsAutoLogged copy = new RollerIOInputsAutoLogged();
     copy.rollerPositionRot = this.rollerPositionRot;

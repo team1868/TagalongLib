@@ -5,6 +5,9 @@ import java.lang.Override;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
+/**
+ * Logger for pivot inputs
+ */
 public class PivotIOInputsAutoLogged
     extends PivotIO.PivotIOInputs implements LoggableInputs, Cloneable {
   @Override
@@ -23,6 +26,9 @@ public class PivotIOInputsAutoLogged
     pivotCurrentAmps = table.get("PivotCurrentAmps", pivotCurrentAmps);
   }
 
+  /**
+   * Returns a copy of PivotIOInputsAutoLogged
+   */
   public PivotIOInputsAutoLogged clone() {
     PivotIOInputsAutoLogged copy = new PivotIOInputsAutoLogged();
     copy.pivotPositionRot = this.pivotPositionRot;

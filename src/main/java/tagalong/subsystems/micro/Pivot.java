@@ -24,11 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import org.littletonrobotics.junction.Logger;
 import tagalong.TagalongConfiguration;
-import tagalong.logging.PivotIO;
-import tagalong.logging.PivotIOInputsAutoLogged;
-import tagalong.logging.PivotIOTalonFX;
 import tagalong.math.AlgebraicUtils;
 import tagalong.subsystems.micro.confs.PivotConf;
 
@@ -126,7 +122,7 @@ public class Pivot extends Microsystem {
   /**
    * Simulated arm of the pivot
    */
-  protected MechanismLigament2d _ligament;
+  protected MechanismLigament2d _pivotLigament;
 
   /**
    * Constructs a pivot microsystem with the below configurations
@@ -593,9 +589,9 @@ public class Pivot extends Microsystem {
     SmartDashboard.putData("SIM: " + _pivotConf.name, _mechanism);
 
     _root = _mechanism.getRoot(_pivotConf.name, _pivotConf.rootX, _pivotConf.rootY);
-    _ligament = new MechanismLigament2d(_pivotConf.name, _pivotConf.pivotLengthM, 0.0);
-    _root.append(_ligament);
-    _ligament.setColor(new Color8Bit(255, 255, 255));
+    _pivotLigament = new MechanismLigament2d(_pivotConf.name, _pivotConf.pivotLengthM, 0.0);
+    _root.append(_pivotLigament);
+    _pivotLigament.setColor(new Color8Bit(255, 255, 255));
 
     _pivotCancoderSim = _pivotCancoder.getSimState();
     _primaryMotorSim = _primaryMotor.getSimState();
@@ -618,7 +614,7 @@ public class Pivot extends Microsystem {
     _simRotations += Units.radiansToRotations(_pivotSim.getAngleRads());
     _simAccelRPS2 = (_simVeloRPS - prevSimVelo) / TagalongConfiguration.LOOP_PERIOD_S;
 
-    _ligament.setAngle(Rotation2d.fromRadians(_pivotSim.getAngleRads()));
+    _pivotLigament.setAngle(Rotation2d.fromRadians(_pivotSim.getAngleRads()));
 
     _pivotCancoderSim.setRawPosition(Units.radiansToRotations(_pivotSim.getAngleRads()));
     _pivotCancoderSim.setVelocity(_simVeloRPS);
@@ -704,5 +700,14 @@ public class Pivot extends Microsystem {
   public void holdCurrentPosition() {
     setPivotProfile(getPivotPosition(), 0.0);
     setFollowProfile(true);
+  }
+
+  /**
+   * Retrieves ligament attached to pivot Mechanism2d
+   *
+   * @return pivot ligament
+   */
+  public MechanismLigament2d getPivotLigament() {
+    return _pivotLigament;
   }
 }

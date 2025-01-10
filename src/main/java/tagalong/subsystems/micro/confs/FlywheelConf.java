@@ -42,6 +42,7 @@ public class FlywheelConf extends RollerConf {
    * @param simSlot1                      simulated PID slot 1 configuration
    * @param simSlot2                      simulated PID slot 2 configuration
    * @param mech2dDim                     dimensions of mechanical system
+   * @param rootName                      sim root name
    * @param rootX                         sim root x coordinate
    * @param rootY                         sim root y coordinate
    * @param simNumLigaments               number of simulated ligaments used

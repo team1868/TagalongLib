@@ -25,7 +25,10 @@ public class TagalongConfiguration {
    */
   public static double LOOP_PERIOD_S = TimedRobot.kDefaultPeriod;
 
-  public static boolean IS_REPLAY = false;
+  /**
+   * Set isReplayMode to true to replay a log
+   */
+  public static boolean isReplayMode = false;
 
   /**
    * Add microsystem names to shuffleboardMicrosystems list if they should be
