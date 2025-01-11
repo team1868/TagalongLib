@@ -157,6 +157,7 @@ public class Microsystem {
 
   // null parser is a configured disablement
   /**
+   * Constructs a microsystem with the below configurations
    *
    * @param conf Configuration for the microsystem
    */
@@ -550,5 +551,13 @@ public class Microsystem {
       resetToleranceTimer();
       return false;
     }
+  }
+
+  /**
+   *
+   * @return sim root
+   */
+  public MechanismRoot2d getRoot() {
+    return _root;
   }
 }

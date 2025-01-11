@@ -8,6 +8,7 @@ package tagalong.subsystems.micro;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -88,7 +89,7 @@ public class Roller extends Microsystem {
   /**
    * Roller ligaments
    */
-  private ArrayList<MechanismLigament2d> rollerLigament = new ArrayList<MechanismLigament2d>();
+  private ArrayList<MechanismLigament2d> _rollerLigaments = new ArrayList<MechanismLigament2d>();
 
   /**
    * Constructs a roller microsystem with the below configurations
@@ -128,11 +129,11 @@ public class Roller extends Microsystem {
 
     if (_isFFTuningMicro) {
       _rollerFF = new SimpleMotorFeedforward(
-          _KSEntry.getDouble(_rollerFF.ks),
-          _KVEntry.getDouble(_rollerFF.kv),
-          _KAEntry.getDouble(_rollerFF.ka)
+          _KSEntry.getDouble(_rollerFF.getKs()),
+          _KVEntry.getDouble(_rollerFF.getKv()),
+          _KAEntry.getDouble(_rollerFF.getKa())
       );
-      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_rollerFF.ks));
+      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_rollerFF.getKs()));
     }
   }
 
@@ -166,20 +167,21 @@ public class Roller extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
+    var dcMotor = _rollerConf.motorTypes[0].simSupplier.apply(_rollerConf.numMotors);
     _rollerSim = new FlywheelSim(
-        _rollerConf.motorTypes[0].simSupplier.apply(_rollerConf.numMotors),
-        _motorToMechRatio,
-        _rollerConf.rollerMOI
+        LinearSystemId.createFlywheelSystem(dcMotor, _rollerConf.rollerMOI, _motorToMechRatio),
+        dcMotor,
+        null
     );
-    _mechanism = new Mechanism2d(50, 50);
+    _mechanism = new Mechanism2d(_rollerConf.mech2dDim, _rollerConf.mech2dDim);
     SmartDashboard.putData("SIM: " + _rollerConf.name, _mechanism);
 
-    _root = _mechanism.getRoot(_rollerConf.name, 25, 25);
+    _root = _mechanism.getRoot(_rollerConf.name, _rollerConf.rootX, _rollerConf.rootY);
     for (int i = 1; i <= _rollerConf.simNumLigaments; i++) {
       MechanismLigament2d ligament = new MechanismLigament2d(
           _rollerConf.name + " " + i, 10, i * (360 / _rollerConf.simNumLigaments)
       );
-      rollerLigament.add(ligament);
+      _rollerLigaments.add(ligament);
       _root.append(ligament);
 
       // FUTURE DEV: allow for explicit color configuration
@@ -206,7 +208,7 @@ public class Roller extends Microsystem {
     _simAccelRPM2 = (_simVeloRPM - prevSimVelo) * 60.0 / TagalongConfiguration.LOOP_PERIOD_S;
 
     for (int i = 1; i <= _rollerConf.simNumLigaments; i++) {
-      rollerLigament.get(i - 1).setAngle(
+      _rollerLigaments.get(i - 1).setAngle(
           Rotation2d.fromRotations(_simRotations + (i * (1.0 / _rollerConf.simNumLigaments)))
       );
     }
@@ -287,14 +289,9 @@ public class Roller extends Microsystem {
         _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
 
     // Control and FeedForward based on mechanism rotations rather than motor rotations
-    _primaryMotor.setControl(
-        _requestedPositionVoltage.withPosition(rollerRotToMotor(nextState.position))
-            .withFeedForward(_rollerFF.calculate(
-                nextState.velocity,
-                (nextState.velocity - _curState.velocity) / TagalongConfiguration.LOOP_PERIOD_S
-
-            ))
-    );
+    _primaryMotor.setControl(_requestedPositionVoltage
+                                 .withPosition(rollerRotToMotor(nextState.position))
+                                 .withFeedForward(_rollerFF.calculate(nextState.velocity)));
 
     if (_isShuffleboardMicro) {
       _targetPositionEntry.setDouble(nextState.position);
@@ -431,7 +428,7 @@ public class Roller extends Microsystem {
 
     setFollowProfile(false);
     _primaryMotor.setControl(_requestedVelocityVoltage.withVelocity(rollerRotToMotor(rps))
-                                 .withFeedForward(withFF ? _rollerFF.calculate(rps, 0.0) : 0.0));
+                                 .withFeedForward(withFF ? _rollerFF.calculate(rps) : 0.0));
   }
 
   /**
@@ -531,5 +528,14 @@ public class Roller extends Microsystem {
   public void holdCurrentPosition() {
     setRollerProfile(getRollerPosition(), 0.0);
     setFollowProfile(true);
+  }
+
+  /**
+   * Retrieves ligaments attached to roller Mechanism2d
+   *
+   * @return roller ligaments
+   */
+  public ArrayList<MechanismLigament2d> getRollerLigaments() {
+    return _rollerLigaments;
   }
 }

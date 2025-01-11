@@ -9,7 +9,6 @@ package tagalong.subsystems.micro.confs;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -107,6 +106,22 @@ public class PivotConf extends MicrosystemConf {
 
   /* -------- Simulation Specific Control -------- */
   /**
+   * Dimension of the mechanical system
+   */
+  public final double mech2dDim;
+  /**
+   * Sim root name
+   */
+  public final String rootName;
+  /**
+   * Sim root x coordinate
+   */
+  public final double rootX;
+  /**
+   * Sim root y coordinate
+   */
+  public final double rootY;
+  /**
    * Moment of inertia for the pivot
    */
   public final double pivotMOI;
@@ -172,6 +187,10 @@ public class PivotConf extends MicrosystemConf {
    * @param ffOffsetValue                   value of the feedforward offset
    * @param profileOffsetUnit               unit of the profile offset
    * @param profileOffsetValue              value of the profile offset
+   * @param mech2dDim                       dimensions of mechanical system
+   * @param rootName                        sim root name
+   * @param rootX                           sim root x coordinate
+   * @param rootY                           sim root y coordinate
    * @param pivotMOI                        moment of inertia for the pivot
    * @param pivotLengthM                    length of the pivot in meters
    */
@@ -217,6 +236,10 @@ public class PivotConf extends MicrosystemConf {
       double ffOffsetValue,
       DistanceUnits profileOffsetUnit,
       double profileOffsetValue,
+      double mech2dDim,
+      String rootName,
+      double rootX,
+      double rootY,
       double pivotMOI,
       double pivotLengthM
   ) {
@@ -263,15 +286,12 @@ public class PivotConf extends MicrosystemConf {
 
     MagnetSensorConfigs magnetSensorConfigs =
         new MagnetSensorConfigs()
-            .withAbsoluteSensorRange(
-                encoderConfigZeroToOne ? AbsoluteSensorRangeValue.Unsigned_0To1
-                                       : AbsoluteSensorRangeValue.Signed_PlusMinusHalf
-            )
             .withMagnetOffset(encoderConfigMagnetOffsetValue)
             .withSensorDirection(
                 encoderConfigClockwisePositive ? SensorDirectionValue.Clockwise_Positive
                                                : SensorDirectionValue.CounterClockwise_Positive
             );
+    magnetSensorConfigs.AbsoluteSensorDiscontinuityPoint = encoderConfigZeroToOne ? 1 : 0;
     this.encoderConfig = new CANcoderConfiguration().withMagnetSensor(magnetSensorConfigs);
 
     this.rotationalMin = rotationalLimitsUnit.convertX(rotationalMin, this.rotationalLimitUnit);
@@ -283,6 +303,10 @@ public class PivotConf extends MicrosystemConf {
     this.profileOffsetValue =
         profileOffsetUnit.convertX(profileOffsetValue, this.profileOffsetUnit);
 
+    this.mech2dDim = mech2dDim;
+    this.rootName = rootName;
+    this.rootX = rootX;
+    this.rootY = rootY;
     this.pivotMOI = pivotMOI;
     this.pivotLengthM = pivotLengthM;
   }

@@ -122,7 +122,7 @@ public class Pivot extends Microsystem {
   /**
    * Simulated arm of the pivot
    */
-  protected MechanismLigament2d _ligament;
+  protected MechanismLigament2d _pivotLigament;
 
   /**
    * Constructs a pivot microsystem with the below configurations
@@ -208,7 +208,7 @@ public class Pivot extends Microsystem {
       _primaryMotor.set(0.0);
     } else if (_isFFTuningMicro && _trapProfile.isFinished(_profileTimer.get())) {
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(
-          _pivotFF.ks + _pivotFF.ks * Math.cos(getFFPositionRad())
+          _pivotFF.getKs() + _pivotFF.getKs() * Math.cos(getFFPositionRad())
       ));
     }
 
@@ -238,13 +238,13 @@ public class Pivot extends Microsystem {
 
     if (_isFFTuningMicro) {
       _pivotFF = new ArmFeedforward(
-          _KSEntry.getDouble(_pivotFF.ks),
-          _KGEntry.getDouble(_pivotFF.kg),
-          _KVEntry.getDouble(_pivotFF.kv),
-          _KAEntry.getDouble(_pivotFF.ka)
+          _KSEntry.getDouble(_pivotFF.getKs()),
+          _KGEntry.getDouble(_pivotFF.getKg()),
+          _KVEntry.getDouble(_pivotFF.getKv()),
+          _KAEntry.getDouble(_pivotFF.getKa())
       );
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(
-          _pivotFF.ks + _pivotFF.ks * Math.cos(getFFPositionRad())
+          _pivotFF.getKs() + _pivotFF.getKs() * Math.cos(getFFPositionRad())
       ));
     }
   }
@@ -327,13 +327,9 @@ public class Pivot extends Microsystem {
         _requestedPositionVoltage
             .withPosition(nextState.position)
             // FeedForward must know the pivot rotation and other arguments in radians
-            .withFeedForward(_pivotFF.calculate(
-                getFFPositionRad(),
-                Units.rotationsToRadians(nextState.velocity),
-                Units.rotationsToRadians(
-                    (nextState.velocity - _curState.velocity) / TagalongConfiguration.LOOP_PERIOD_S
-                )
-            ))
+            .withFeedForward(
+                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
+            )
     );
 
     if (_isShuffleboardMicro) {
@@ -395,8 +391,7 @@ public class Pivot extends Microsystem {
             // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
             .withVelocity(rps)
             .withFeedForward(
-                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps), 0.0)
-                       : 0.0
+                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
             )
     );
   }
@@ -573,6 +568,7 @@ public class Pivot extends Microsystem {
   /**
    * Initializes the pivot simulation
    */
+  @Override
   public void simulationInit() {
     if (_isMicrosystemDisabled) {
       return;
@@ -583,19 +579,19 @@ public class Pivot extends Microsystem {
         _motorToEncoderRatio * _encoderToPivotRatio,
         _pivotConf.pivotMOI,
         _pivotConf.pivotLengthM,
-        Units.degreesToRadians(_minPositionRot),
-        Units.degreesToRadians(_maxPositionRot),
+        Units.rotationsToRadians(_minPositionRot),
+        Units.rotationsToRadians(_maxPositionRot),
         true,
-        Units.degreesToRadians(0)
+        Units.rotationsToRadians(0)
     );
 
-    _mechanism = new Mechanism2d(50, 50);
+    _mechanism = new Mechanism2d(_pivotConf.mech2dDim, _pivotConf.mech2dDim);
     SmartDashboard.putData("SIM: " + _pivotConf.name, _mechanism);
 
-    _root = _mechanism.getRoot(_pivotConf.name, 25, 25);
-    _ligament = new MechanismLigament2d(_pivotConf.name, 10.0, 180);
-    _root.append(_ligament);
-    _ligament.setColor(new Color8Bit(255, 255, 255));
+    _root = _mechanism.getRoot(_pivotConf.name, _pivotConf.rootX, _pivotConf.rootY);
+    _pivotLigament = new MechanismLigament2d(_pivotConf.name, _pivotConf.pivotLengthM, 0.0);
+    _root.append(_pivotLigament);
+    _pivotLigament.setColor(new Color8Bit(255, 255, 255));
 
     _pivotCancoderSim = _pivotCancoder.getSimState();
     _primaryMotorSim = _primaryMotor.getSimState();
@@ -618,7 +614,7 @@ public class Pivot extends Microsystem {
     _simRotations += Units.radiansToRotations(_pivotSim.getAngleRads());
     _simAccelRPS2 = (_simVeloRPS - prevSimVelo) / TagalongConfiguration.LOOP_PERIOD_S;
 
-    _ligament.setAngle(Rotation2d.fromRadians(_pivotSim.getAngleRads()));
+    _pivotLigament.setAngle(Rotation2d.fromRadians(_pivotSim.getAngleRads()));
 
     _pivotCancoderSim.setRawPosition(Units.radiansToRotations(_pivotSim.getAngleRads()));
     _pivotCancoderSim.setVelocity(_simVeloRPS);
@@ -704,5 +700,14 @@ public class Pivot extends Microsystem {
   public void holdCurrentPosition() {
     setPivotProfile(getPivotPosition(), 0.0);
     setFollowProfile(true);
+  }
+
+  /**
+   * Retrieves ligament attached to pivot Mechanism2d
+   *
+   * @return pivot ligament
+   */
+  public MechanismLigament2d getPivotLigament() {
+    return _pivotLigament;
   }
 }

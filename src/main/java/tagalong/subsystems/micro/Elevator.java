@@ -80,11 +80,11 @@ public class Elevator extends Microsystem {
   /**
    * Base stage ligament
    */
-  protected MechanismLigament2d _elevatorBaseStage;
+  protected MechanismLigament2d _elevatorBaseStageLigament;
   /**
    * Stage 1 ligament
    */
-  protected MechanismLigament2d _elevatorStage1;
+  protected MechanismLigament2d _elevatorStage1Ligament;
   /**
    * Velocity of the simulated elevator in meters per second
    */
@@ -95,7 +95,7 @@ public class Elevator extends Microsystem {
   protected boolean _primaryMotorInverted;
 
   /**
-   * Constructor that creates an elevator microsystem with the below configurations
+   * Constructs an elevator microsystem with the below configurations
    *
    * @param conf Configuration for the elevator
    */
@@ -158,11 +158,7 @@ public class Elevator extends Microsystem {
     _primaryMotor.setControl(_requestedPositionVoltage
                                  .withPosition(metersToMotor(nextState.position))
                                  // State is in meters, so the FF can handle the units directly
-                                 .withFeedForward(_elevatorFF.calculate(
-                                     nextState.velocity,
-                                     (nextState.velocity - _curState.velocity)
-                                         / TagalongConfiguration.LOOP_PERIOD_S
-                                 )));
+                                 .withFeedForward(_elevatorFF.calculate(nextState.velocity)));
 
     if (_isShuffleboardMicro) {
       _targetPositionEntry.setDouble(nextState.position);
@@ -283,7 +279,7 @@ public class Elevator extends Microsystem {
 
     setFollowProfile(false);
     _primaryMotor.setControl(_requestedVelocityVoltage.withVelocity(metersToMotor(mps))
-                                 .withFeedForward(withFF ? _elevatorFF.calculate(mps, 0.0) : 0.0));
+                                 .withFeedForward(withFF ? _elevatorFF.calculate(mps) : 0.0));
   }
 
   /**
@@ -305,12 +301,12 @@ public class Elevator extends Microsystem {
 
     if (_isFFTuningMicro) {
       _elevatorFF = new ElevatorFeedforward(
-          _KSEntry.getDouble(_elevatorFF.ks),
-          _KGEntry.getDouble(_elevatorFF.kg),
-          _KVEntry.getDouble(_elevatorFF.kv),
-          _KAEntry.getDouble(_elevatorFF.ka)
+          _KSEntry.getDouble(_elevatorFF.getKs()),
+          _KGEntry.getDouble(_elevatorFF.getKg()),
+          _KVEntry.getDouble(_elevatorFF.getKv()),
+          _KAEntry.getDouble(_elevatorFF.getKa())
       );
-      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_elevatorFF.ks));
+      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_elevatorFF.getKs()));
     }
   }
 
@@ -354,22 +350,23 @@ public class Elevator extends Microsystem {
     );
     _primaryMotorSim = _primaryMotor.getSimState();
     _mechanism = new Mechanism2d(_elevatorConf.mech2dDim, _elevatorConf.mech2dDim);
-    _root =
-        _mechanism.getRoot(_elevatorConf.name, _elevatorConf.lineLength, _elevatorConf.lineLength);
-    _elevatorBaseStage = _root.append(new MechanismLigament2d(
+    _root = _mechanism.getRoot(_elevatorConf.rootName, _elevatorConf.rootX, _elevatorConf.rootY);
+    _elevatorBaseStageLigament = new MechanismLigament2d(
         "BaseStage",
         _elevatorConf.lineLength,
-        180 + _elevatorConf.angle,
-        6,
+        _elevatorConf.angle,
+        6.0,
         new Color8Bit(Color.kAliceBlue)
-    ));
-    _elevatorStage1 = _root.append(new MechanismLigament2d(
+    );
+    _elevatorStage1Ligament = new MechanismLigament2d(
         "Stage1",
         _elevatorConf.lineLength,
         _elevatorConf.angle,
-        6,
+        6.0,
         new Color8Bit(Color.kLightSalmon)
-    ));
+    );
+    _root.append(_elevatorBaseStageLigament);
+    _root.append(_elevatorStage1Ligament);
     SmartDashboard.putData("SIM: " + _conf.name, _mechanism);
     _primaryMotorInverted = _conf.motorDirection[0] == InvertedValue.Clockwise_Positive;
   }
@@ -379,7 +376,7 @@ public class Elevator extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-    _elevatorSim.setInputVoltage(_primaryMotor.getMotorVoltage().getValue());
+    _elevatorSim.setInputVoltage(_primaryMotor.getMotorVoltage().getValueAsDouble());
     _elevatorSim.update(TagalongConfiguration.LOOP_PERIOD_S);
 
     double simAccelMPS2 = (_elevatorSim.getVelocityMetersPerSecond() - _simVelocityMPS)
@@ -397,9 +394,7 @@ public class Elevator extends Microsystem {
     _primaryMotorSim.setRotorAcceleration(
         metersToMotor(_primaryMotorInverted ? (-1 * simAccelMPS2) : simAccelMPS2)
     );
-    _elevatorStage1.setLength(
-        (_elevatorConf.lineLength * _elevatorSim.getPositionMeters() / _elevatorMaxHeightM)
-    );
+    _elevatorStage1Ligament.setLength(_elevatorSim.getPositionMeters());
     _primaryMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(_elevatorSim.getCurrentDrawAmps())
@@ -490,5 +485,23 @@ public class Elevator extends Microsystem {
   public void holdCurrentPosition() {
     setElevatorProfile(getElevatorHeightM(), 0.0);
     setFollowProfile(true);
+  }
+
+  /**
+   * Retrieves base stage ligament attached to elevator Mechanism2d
+   *
+   * @return elevator base stage ligament
+   */
+  public MechanismLigament2d getElevatorBaseStageLigament() {
+    return _elevatorBaseStageLigament;
+  }
+
+  /**
+   * Retrieves stage 1 ligament attached to elevator Mechanism2d
+   *
+   * @return elevator stage 1 ligament
+   */
+  public MechanismLigament2d getElevatorStage1Ligament() {
+    return _elevatorStage1Ligament;
   }
 }

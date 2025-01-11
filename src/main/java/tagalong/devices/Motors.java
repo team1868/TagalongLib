@@ -109,8 +109,8 @@ public enum Motors implements CanDeviceInterface {
 
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.CurrentLimits.SupplyCurrentLimit = DEFAULT_SUPPLY_CURRENT_LIMIT_AMPS;
-    config.CurrentLimits.SupplyCurrentThreshold = DEFAULT_SUPPLY_CURRENT_THRESHOLD_LIMIT_AMPS;
-    config.CurrentLimits.SupplyTimeThreshold = DEFAULT_SUPPLY_TIME_THRESHOLD; // seconds
+    config.CurrentLimits.SupplyCurrentLowerLimit = DEFAULT_SUPPLY_CURRENT_THRESHOLD_LIMIT_AMPS;
+    config.CurrentLimits.SupplyCurrentLowerTime = DEFAULT_SUPPLY_TIME_THRESHOLD; // seconds
 
     config.TorqueCurrent.PeakForwardTorqueCurrent = DEFAULT_STATOR_CURRENT_LIMIT_AMPS;
     config.TorqueCurrent.PeakReverseTorqueCurrent = -DEFAULT_STATOR_CURRENT_LIMIT_AMPS;

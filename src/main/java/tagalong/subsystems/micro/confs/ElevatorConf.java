@@ -61,15 +61,27 @@ public class ElevatorConf extends MicrosystemConf {
   /**
    * Dimension of the mechanical system
    */
-  public final int mech2dDim;
+  public final double mech2dDim;
+  /**
+   * Sim root name
+   */
+  public final String rootName;
+  /**
+   * Sim root x coordinate
+   */
+  public final double rootX;
+  /**
+   * Sim root y coordinate
+   */
+  public final double rootY;
   /**
    * Length of the line
    */
-  public final int lineLength;
+  public final double lineLength;
   /**
    * Angle of the elevator
    */
-  public final int angle;
+  public final double angle;
   /**
    *
    */
@@ -119,6 +131,9 @@ public class ElevatorConf extends MicrosystemConf {
    * @param carriageMassUnit              units for the carriage mass
    * @param carriageMassValue             value of the carriage mass
    * @param mech2dDim                     dimensions of mechanical system
+   * @param rootX                         sim root x coordinate
+   * @param rootY                         sim root y coordinate
+   * @param rootName                      sim root name
    * @param lineLength                    length of the line
    * @param angle                         angle of the elevator
    * @param simSlot0                      simulated PID slot 0 configuration
@@ -156,9 +171,12 @@ public class ElevatorConf extends MicrosystemConf {
       PIDSGVAConstants slot2,
       MassUnits carriageMassUnit,
       double carriageMassValue,
-      int mech2dDim,
-      int lineLength,
-      int angle,
+      double mech2dDim,
+      String rootName,
+      double rootX,
+      double rootY,
+      double lineLength,
+      double angle,
       PIDSGVAConstants simSlot0,
       PIDSGVAConstants simSlot1,
       PIDSGVAConstants simSlot2,
@@ -203,9 +221,11 @@ public class ElevatorConf extends MicrosystemConf {
 
     this.carriageMassValue = carriageMassUnit.convertX(carriageMassValue, this.carriageMassUnit);
     this.mech2dDim = mech2dDim;
+    this.rootName = rootName;
+    this.rootX = rootX;
+    this.rootY = rootY;
     this.lineLength = lineLength;
     this.angle = angle;
-
     this.feedForward = IterativeRobotBase.isReal() ? feedForward.getElevatorFeedforward()
                                                    : simFeedForward.getElevatorFeedforward();
   }
