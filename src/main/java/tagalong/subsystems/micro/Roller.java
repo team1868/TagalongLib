@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.ArrayList;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
+import tagalong.measurements.Angle;
 import tagalong.subsystems.micro.confs.RollerConf;
 
 /**
@@ -304,6 +305,86 @@ public class Roller extends Microsystem {
   /**
    * Creates a new trapezoidal profile for the roller to follow
    *
+   * @param goalPosition     goal position in rotations
+   */
+  public void setRollerProfile(Angle goalPosition) {
+    setRollerProfile(goalPosition.getRotations());
+  }
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   */
+  public void setRollerProfile(Angle goalPosition, double goalVelocityRPS) {
+    setRollerProfile(goalPosition.getRotations(), goalVelocityRPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   */
+  public void setRollerProfile(Angle goalPosition, double goalVelocityRPS, double maxVelocityRPS) {
+    setRollerProfile(goalPosition.getRotations(), goalVelocityRPS, maxVelocityRPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   * @param maxAccelerationRPS2 maximum acceleration in rotations per second squared
+   */
+  public void setRollerProfile(
+      Angle goalPosition, double goalVelocityRPS, double maxVelocityRPS, double maxAccelerationRPS2
+  ) {
+    setRollerProfile(
+        goalPosition.getRotations(), goalVelocityRPS, maxVelocityRPS, maxAccelerationRPS2
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   * @param maxAccelerationRPS2 maximum acceleration in rotations per second squared
+   * @param setCurrentState     True if the profiles current state should base itself off sensor
+   *     values rather than continue from the existing state
+   */
+  public void setRollerProfile(
+      Angle goalPosition,
+      double goalVelocityRPS,
+      double maxVelocityRPS,
+      double maxAccelerationRPS2,
+      boolean setCurrentState
+  ) {
+    setRollerProfile(
+        goalPosition.getRotations(),
+        goalVelocityRPS,
+        maxVelocityRPS,
+        maxAccelerationRPS2,
+        setCurrentState
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
+   * @param goalPositionRot goal position in rotations
+   */
+  public void setRollerProfile(double goalPositionRot) {
+    setRollerProfile(goalPositionRot, 0.0);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the roller to follow
+   *
    * @param goalPositionRot goal position in rotations
    * @param goalVelocityRPS goal velocity in rotations per second
    */
@@ -323,6 +404,7 @@ public class Roller extends Microsystem {
   ) {
     setRollerProfile(goalPositionRot, goalVelocityRPS, maxVelocityRPS, _maxAccelerationRPS2);
   }
+
   /**
    * Creates a new trapezoidal profile for the roller to follow
    *
@@ -513,9 +595,9 @@ public class Roller extends Microsystem {
   /**
    * Bounds checking function that uses the current roller position
    *
-   * @param lowerBound Minimum of acceptable range
-   * @param upperBound Maximum of acceptable range
-   * @return If the current position is in specified acceptable range
+   * @param lowerBound minimum of acceptable range
+   * @param upperBound maximum of acceptable range
+   * @return if the current position is in specified acceptable range
    */
   public boolean isRollerInTolerance(double lowerBound, double upperBound) {
     if (_isMicrosystemDisabled) {

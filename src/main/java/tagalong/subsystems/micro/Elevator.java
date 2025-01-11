@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
+import tagalong.measurements.Height;
 import tagalong.subsystems.micro.confs.ElevatorConf;
 
 /**
@@ -166,6 +167,89 @@ public class Elevator extends Microsystem {
     }
 
     _curState = nextState;
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
+   */
+  public void setElevatorProfile(Height goalPosition) {
+    setElevatorProfile(goalPosition.getHeightM());
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
+   * @param goalVelocityMPS     goal velocity in meters per second
+   */
+  public void setElevatorProfile(Height goalPosition, double goalVelocityMPS) {
+    setElevatorProfile(goalPosition.getHeightM(), goalVelocityMPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
+   * @param goalVelocityMPS     goal velocity in meters per second
+   * @param maxVelocityMPS      maximum velocity in meters per second
+   */
+  public void setElevatorProfile(
+      Height goalPosition, double goalVelocityMPS, double maxVelocityMPS
+  ) {
+    setElevatorProfile(goalPosition.getHeightM(), goalVelocityMPS, maxVelocityMPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
+   * @param goalVelocityMPS     goal velocity in meters per second
+   * @param maxVelocityMPS      maximum velocity in meters per second
+   * @param maxAccelerationMPS2 maximum acceleration in meters per second squared
+   */
+  public void setElevatorProfile(
+      Height goalPosition, double goalVelocityMPS, double maxVelocityMPS, double maxAccelerationMPS2
+  ) {
+    setElevatorProfile(
+        goalPosition.getHeightM(), goalVelocityMPS, maxVelocityMPS, maxAccelerationMPS2
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPosition     goal position in meters
+   * @param goalVelocityMPS     goal velocity in meters per second
+   * @param maxVelocityMPS      maximum velocity in meters per second
+   * @param maxAccelerationMPS2 maximum acceleration in meters per second squared
+   * @param setCurrentState     True if the profiles current state should base itself off sensor
+   *     values rather than continue from the existing state
+   */
+  public void setElevatorProfile(
+      Height goalPosition,
+      double goalVelocityMPS,
+      double maxVelocityMPS,
+      double maxAccelerationMPS2,
+      boolean setCurrentState
+  ) {
+    setElevatorProfile(
+        goalPosition.getHeightM(),
+        goalVelocityMPS,
+        maxVelocityMPS,
+        maxAccelerationMPS2,
+        setCurrentState
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the elevator to follow
+   *
+   * @param goalPositionM goal position in meters
+   */
+  public void setElevatorProfile(double goalPositionM) {
+    setElevatorProfile(goalPositionM, 0.0);
   }
 
   /**

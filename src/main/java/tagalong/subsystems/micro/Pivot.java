@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
+import tagalong.measurements.Angle;
 import tagalong.subsystems.micro.confs.PivotConf;
 
 /**
@@ -66,13 +67,13 @@ public class Pivot extends Microsystem {
    */
   public final double _absoluteRangeRot;
   /**
-   * Minimum height of the pivot in rotations,
-   * Maximum height of the pivot in rotations
+   * Minimum position of the pivot in rotations,
+   * Maximum position of the pivot in rotations
    */
   public final double _minPositionRot, _maxPositionRot;
   /**
-   * Maximum velocity of the pivot in rollers per second,
-   * Maximum acceleration of the rollers in rotations per second squared
+   * Maximum velocity of the pivot in rotations per second,
+   * Maximum acceleration of the pivot in rotations per second squared
    */
   public final double _maxVelocityRPS, _maxAccelerationRPS2;
   /**
@@ -80,7 +81,7 @@ public class Pivot extends Microsystem {
    */
   public final double _profileTargetOffset;
 
-  /* -------- Control: controllers and utilities -------- */
+  /* -------- Control: controller and utilities -------- */
   /**
    * Feedforward model for the pivot
    */
@@ -275,8 +276,8 @@ public class Pivot extends Microsystem {
   /**
    * Converts motor rotations to rotations of the pivot mechanism
    *
-   * @param motorRot Position of the motor in rotations
-   * @return Position of the pivot in rotations
+   * @param motorRot position of the motor in rotations
+   * @return position of the pivot in rotations
    */
   public double motorToPivotRot(double motorRot) {
     if (_isMicrosystemDisabled) {
@@ -289,8 +290,8 @@ public class Pivot extends Microsystem {
   /**
    * Converts rotations of the pivot mechanism to motor rotations
    *
-   * @param pivotRot Position of the pivot in rotations
-   * @return Position of the motor in rotations
+   * @param pivotRot position of the pivot in rotations
+   * @return position of the motor in rotations
    */
   public double pivotRotToMotor(double pivotRot) {
     if (_isMicrosystemDisabled) {
@@ -425,6 +426,87 @@ public class Pivot extends Microsystem {
    */
   public double placePivotInClosestRot(double scopeReferenceRot, double newAngleRot) {
     return AlgebraicUtils.placeInScopeRot(scopeReferenceRot, newAngleRot);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   */
+  public void setPivotProfile(Angle goalPosition) {
+    setPivotProfile(goalPosition.getRotations());
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   */
+  public void setPivotProfile(Angle goalPosition, double goalVelocityRPS) {
+    setPivotProfile(goalPosition.getRotations(), goalVelocityRPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   */
+  public void setPivotProfile(Angle goalPosition, double goalVelocityRPS, double maxVelocityRPS) {
+    setPivotProfile(goalPosition.getRotations(), goalVelocityRPS, maxVelocityRPS);
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   * @param maxAccelerationRPS2 maximum acceleration in rotations per second squared
+   */
+  public void setPivotProfile(
+      Angle goalPosition, double goalVelocityRPS, double maxVelocityRPS, double maxAccelerationRPS2
+  ) {
+    setPivotProfile(
+        goalPosition.getRotations(), goalVelocityRPS, maxVelocityRPS, maxAccelerationRPS2
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPosition     goal position in rotations
+   * @param goalVelocityRPS     goal velocity in rotations per second
+   * @param maxVelocityRPS      maximum velocity in rotations per second
+   * @param maxAccelerationRPS2 maximum acceleration in rotations per second squared
+   * @param setCurrentState     True if the profiles current state should base itself off sensor
+   *     values rather than continue from the existing state
+   */
+  public void setPivotProfile(
+      Angle goalPosition,
+      double goalVelocityRPS,
+      double maxVelocityRPS,
+      double maxAccelerationRPS2,
+      boolean setCurrentState
+  ) {
+    setPivotProfile(
+        goalPosition.getRotations(),
+        goalVelocityRPS,
+        maxVelocityRPS,
+        maxAccelerationRPS2,
+        setCurrentState
+    );
+  }
+
+  /**
+   * Creates a new trapezoidal profile for the pivot to follow
+   *
+   * @param goalPositionRot goal position in rotations
+   */
+  public void setPivotProfile(double goalPositionRot) {
+    setPivotProfile(goalPositionRot, 0.0);
   }
 
   /**
@@ -668,9 +750,9 @@ public class Pivot extends Microsystem {
   /**
    * Bounds checking function that uses the current pivot position
    *
-   * @param lowerBound Minimum of acceptable range
-   * @param upperBound Maximum of acceptable range
-   * @return If the current position is greater than or equal to the lower bound and less than or
+   * @param lowerBound minimum of acceptable range
+   * @param upperBound maximum of acceptable range
+   * @return if the current position is greater than or equal to the lower bound and less than or
    *     equal to the upper bound
    */
   public boolean isPivotInTolerance(double lowerBound, double upperBound) {
@@ -683,9 +765,9 @@ public class Pivot extends Microsystem {
   /**
    * Bounds checking function that uses the absolute current pivot position (modulo one rotation)
    *
-   * @param lowerBound Minimum of acceptable range
-   * @param upperBound Maximum of acceptable range
-   * @return If the absolute current position is in absolute acceptable range
+   * @param lowerBound minimum of acceptable range
+   * @param upperBound maximum of acceptable range
+   * @return if the absolute current position is in absolute acceptable range
    */
   public boolean isPivotInAbsoluteTolerance(double lowerBound, double upperBound) {
     double position = AlgebraicUtils.cppMod(getPivotPosition(), 1.0);
