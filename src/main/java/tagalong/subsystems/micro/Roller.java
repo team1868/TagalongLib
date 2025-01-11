@@ -172,7 +172,7 @@ public class Roller extends Microsystem {
     _rollerSim = new FlywheelSim(
         LinearSystemId.createFlywheelSystem(dcMotor, _rollerConf.rollerMOI, _motorToMechRatio),
         dcMotor,
-        null
+        _motorToMechRatio
     );
     _mechanism = new Mechanism2d(_rollerConf.mech2dDim, _rollerConf.mech2dDim);
     SmartDashboard.putData("SIM: " + _rollerConf.name, _mechanism);
