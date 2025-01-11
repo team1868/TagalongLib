@@ -9,7 +9,9 @@ Developed by FRC Team #1868 and Girls Scout Troop #62868 the Space Cookies. Name
 
 ## Download & Installation
 TagalongLib is a standalone library that packages its dependencies into its release jar. When using TagalongLib as a standalone library, add it to your project using the vendor dependency file `TagalongLib.json` found in the [TagalongLib releases](https://github.com/team1868/TagalongLib/releases). Please also insert the following code snippet into your project's build.gradle:
-> repositories {
+
+```
+repositories {
     maven {
       url = uri("https://maven.pkg.github.com/team1868/TagalongLib")
       credentials {
@@ -18,6 +20,7 @@ TagalongLib is a standalone library that packages its dependencies into its rele
         }
     }
 }
+```
 
 ## FRC Robot Code Integration
 We encourage everyone to use the [Tagalong Robot Builder](https://github.com/team1868/TagalongRobotBuilder) for automatic generation and integration of Tagalong based subsystems.
