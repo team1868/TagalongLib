@@ -43,6 +43,10 @@ public class RollerConf extends MicrosystemConf {
    */
   public final int simNumLigaments;
   /**
+   * Length of simulated ligaments
+   */
+  public final double ligamentsLength;
+  /**
    * Moment of inertia for the roller
    */
   public final double rollerMOI;
@@ -83,6 +87,7 @@ public class RollerConf extends MicrosystemConf {
    * @param rootX                         sim root x coordinate
    * @param rootY                         sim root y coordinate
    * @param simNumLigaments               number of simulated ligaments used
+   * @param ligamentsLength                length of simulated ligaments
    * @param rollerMOI                     moment of inertia for the roller
    */
   public RollerConf(
@@ -116,6 +121,7 @@ public class RollerConf extends MicrosystemConf {
       double rootX,
       double rootY,
       int simNumLigaments,
+      double ligamentsLength,
       double rollerMOI
   ) {
     super(
@@ -152,6 +158,7 @@ public class RollerConf extends MicrosystemConf {
     this.rootX = rootX;
     this.rootY = rootY;
     this.simNumLigaments = simNumLigaments;
+    this.ligamentsLength = ligamentsLength;
     this.rollerMOI = rollerMOI;
     this.feedForward = IterativeRobotBase.isReal() ? feedForward.getSimpleMotorFeedforward()
                                                    : simFeedForward.getSimpleMotorFeedforward();

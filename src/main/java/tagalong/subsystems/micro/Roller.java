@@ -180,7 +180,9 @@ public class Roller extends Microsystem {
     _root = _mechanism.getRoot(_rollerConf.name, _rollerConf.rootX, _rollerConf.rootY);
     for (int i = 1; i <= _rollerConf.simNumLigaments; i++) {
       MechanismLigament2d ligament = new MechanismLigament2d(
-          _rollerConf.name + " " + i, 10, i * (360 / _rollerConf.simNumLigaments)
+          _rollerConf.name + " " + i,
+          _rollerConf.ligamentsLength,
+          i * (360 / _rollerConf.simNumLigaments)
       );
       _rollerLigaments.add(ligament);
       _root.append(ligament);

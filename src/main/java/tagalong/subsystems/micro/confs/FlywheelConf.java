@@ -46,6 +46,7 @@ public class FlywheelConf extends RollerConf {
    * @param rootX                         sim root x coordinate
    * @param rootY                         sim root y coordinate
    * @param simNumLigaments               number of simulated ligaments used
+   * @param ligamentsLength               length of simulated ligaments
    * @param rollerMOI                     moment of inertia for the roller
    */
   public FlywheelConf(
@@ -79,6 +80,7 @@ public class FlywheelConf extends RollerConf {
       double rootX,
       double rootY,
       int simNumLigaments,
+      double ligamentsLength,
       double rollerMOI
 
   ) {
@@ -117,6 +119,7 @@ public class FlywheelConf extends RollerConf {
         rootX,
         rootY,
         simNumLigaments,
+        ligamentsLength,
         rollerMOI
     );
 
