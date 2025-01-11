@@ -9,13 +9,19 @@ package tagalong.math;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * Linearized Lookup Table
+ */
 public class LinearizedLookupTable {
   private double[] _ids;
   private double[] _values;
   private double max, min;
 
   /**
-   * Constructs a lookup table containing ids and their corresponding values
+   * Constructs a lookup table containing IDs and their corresponding values
+   *
+   * @param id array of identifiers
+   * @param values array of values corresponding to the IDs
    */
   public LinearizedLookupTable(double[] id, double[] values) {
     if (id.length != values.length)
@@ -44,9 +50,9 @@ public class LinearizedLookupTable {
   }
 
   /**
-   * Returns the value that the id maps to on a continuous, linearized function
+   * Returns the value that the ID maps to on a continuous, linearized function
    *
-   * @param id id contained in the lookup table
+   * @param id ID contained in the lookup table
    * @return value using linearized lookup
    */
   public double lookup(double id) {
@@ -67,6 +73,11 @@ public class LinearizedLookupTable {
     }
   }
 
+  /**
+   * Gets length of ID array
+   *
+   * @return length of ID array
+   */
   public int size() {
     return _ids.length;
   }
