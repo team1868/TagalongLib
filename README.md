@@ -8,7 +8,7 @@ Developed by FRC Team #1868 and Girls Scout Troop #62868 the Space Cookies. Name
 [Java API Docs](https://team1868.github.io/TagalongLibDocs/)
 
 ## Download & Installation
-TagalongLib is a standalone library that packages its dependencies into its release jar. When using TagalongLib as a standalone library, add it to your project using the vendor dependency file `TagalongLib.json` found in the [TagalongLib releases](https://github.com/team1868/TagalongLib/releases). Please also insert the following code snippet into build.gradle:
+TagalongLib is a standalone library that packages its dependencies into its release jar. When using TagalongLib as a standalone library, add it to your project using the vendor dependency file `TagalongLib.json` found in the [TagalongLib releases](https://github.com/team1868/TagalongLib/releases). Please also insert the following code snippet into your project's build.gradle:
 > repositories {
     maven {
       url = uri("https://maven.pkg.github.com/team1868/TagalongLib")
