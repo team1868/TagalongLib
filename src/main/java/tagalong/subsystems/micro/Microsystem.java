@@ -166,7 +166,6 @@ public class Microsystem {
     // In the future we need a more discrete function configuring this
     _isMicrosystemDisabled = _configuredMicrosystemDisable;
     _conf = conf;
-    configTuningModes();
 
     if (_configuredMicrosystemDisable) {
       _allMotors = new TalonFX[0];
@@ -183,6 +182,7 @@ public class Microsystem {
     // FUTURE DEV: Inject this here rather than robot builder
     // configShuffleboard();
     waitForInitialization();
+    configTuningModes();
   }
 
   /**
