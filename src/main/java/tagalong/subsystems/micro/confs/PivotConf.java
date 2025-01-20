@@ -158,6 +158,7 @@ public class PivotConf extends MicrosystemConf {
    * @param motorDeviceIDs                  motor device ids
    * @param motorCanBus                     motor can bus
    * @param motorDirection                  motor directions
+   * @param pivotType                       pivot type ("default", "fused", or "no encoder")
    * @param encoderType                     encoder type used for the pivot
    * @param encoderDeviceID                 device id of the encoder
    * @param encoderCanBus                   can bus of the encoder
