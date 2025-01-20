@@ -360,10 +360,18 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled || (_pivotType == PivotTypes.noEncoder)) {
       return 0.0;
     }
-    return Units.rotationsToRadians(
-               _pivotCancoder.getPosition().getValueAsDouble() * _encoderToPivotRatio
-           )
-        + _ffCenterOfMassOffsetRad;
+    if (_pivotType == PivotTypes.fused) {
+      return Units.rotationsToRadians(
+                 _pivotCancoder.getPosition().getValueAsDouble() * _encoderToPivotRatio
+             )
+          + _ffCenterOfMassOffsetRad;
+    } else {
+      return Units.rotationsToRadians(
+                 _pivotCancoder.getPosition().getValueAsDouble() / _motorToEncoderRatio
+                 * _motorToMechRatio
+             )
+          + _ffCenterOfMassOffsetRad;
+    }
   }
 
   /**
