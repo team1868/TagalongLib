@@ -38,7 +38,10 @@ public class PivotConf extends MicrosystemConf {
    * Feedforward model for the arm
    */
   public final ArmFeedforward feedForward;
-
+  /**
+   * Pivot type used ("default", "unfused", "no encoder")
+   */
+  public final String pivotType;
   /**
    * Encoder type used for the pivot
    */
@@ -51,6 +54,10 @@ public class PivotConf extends MicrosystemConf {
    * CAN bus of the encoder
    */
   public final String encoderCanBus;
+  /**
+   * Ratio between the motor and mechanism
+   */
+  public double motorToMechRatio;
   /**
    * Ratio between the motor and encoder
    */
@@ -200,6 +207,7 @@ public class PivotConf extends MicrosystemConf {
       int[] motorDeviceIDs,
       String[] motorCanBus,
       InvertedValue[] motorDirection,
+      String pivotType,
       Encoders encoderType,
       int encoderDeviceID,
       String encoderCanBus,
@@ -272,6 +280,7 @@ public class PivotConf extends MicrosystemConf {
         simSlot1,
         simSlot2
     );
+    this.pivotType = pivotType;
     this.encoderType = encoderType;
     this.encoderDeviceID = encoderDeviceID;
     this.encoderCanBus = encoderCanBus;

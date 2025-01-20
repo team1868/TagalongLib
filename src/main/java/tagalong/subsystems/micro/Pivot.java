@@ -50,6 +50,10 @@ public class Pivot extends Microsystem {
 
   /* -------- Control: states and constants -------- */
   /**
+   * Ratio between motor rotations and roller rotations
+   */
+  protected double _motorToMechRatio;
+  /**
    * Gear ratio from the motor to encoder (conversion g.t. 1 represents a reduction)
    */
   protected double _motorToEncoderRatio;
@@ -57,6 +61,10 @@ public class Pivot extends Microsystem {
    * Gear ratio from the encoder to pivot mechanism (conversion g.t. 1 represents a reduction)
    */
   protected double _encoderToPivotRatio;
+  /**
+   * Pivot type used ("default", "unfused", "no encoder")
+   */
+  protected String _pivotType;
   /**
    * Default lower tolerance of the pivot in rotations,
    * Default upper tolerance of the pivot in rotations
@@ -163,10 +171,12 @@ public class Pivot extends Microsystem {
     _trapProfile = new TrapezoidProfile(_pivotConf.trapezoidalLimits);
     _curState.position = getPivotPosition();
 
+    _motorToMechRatio = _pivotConf.motorToMechRatio;
     _motorToEncoderRatio = _pivotConf.motorToEncoderRatio;
     _encoderToPivotRatio = _pivotConf.encoderToPivotRatio;
 
     _pivotCancoderConfiguration = _pivotConf.encoderConfig;
+    _pivotType = _pivotConf.pivotType;
 
     double minAbs = AlgebraicUtils.cppMod(_minPositionRot, 1.0);
     double maxAbs = AlgebraicUtils.cppMod(_maxPositionRot, 1.0);
@@ -283,7 +293,9 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled) {
       return 0.0;
     }
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
+    if (_pivotType == "no encoder") {
+      return motorRot / _motorToMechRatio;
+    }
     return motorRot / (_encoderToPivotRatio * _motorToEncoderRatio);
   }
 
@@ -297,7 +309,9 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled) {
       return 0.0;
     }
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
+    if (_pivotType == "noEncoder") {
+      return pivotRot * _motorToMechRatio;
+    }
     return pivotRot * (_encoderToPivotRatio * _motorToEncoderRatio);
   }
 
@@ -323,16 +337,12 @@ public class Pivot extends Microsystem {
 
     TrapezoidProfile.State nextState =
         _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot, convert to motor units
     _primaryMotor.setControl(
-        _requestedPositionVoltage
-            .withPosition(nextState.position)
-            // FeedForward must know the pivot rotation and other arguments in radians
-            .withFeedForward(
-                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
-            )
+        _requestedPositionVoltage.withPosition(pivotRotToMotor(nextState.position))
+            .withFeedForward(_pivotFF.calculate(
+                getFFPositionRad(), Units.rotationsToRadians(pivotRotToMotor(nextState.velocity))
+            ))
     );
-
     if (_isShuffleboardMicro) {
       _targetPositionEntry.setDouble(nextState.position);
       _targetVelocityEntry.setDouble(nextState.velocity);
@@ -340,7 +350,6 @@ public class Pivot extends Microsystem {
 
     _curState = nextState;
   }
-
   /**
    * Gets the position offset for feedforward (to account for a shifted center of
    * mass) in rotations
@@ -348,12 +357,12 @@ public class Pivot extends Microsystem {
    * @return offset position in rotations
    */
   public double getFFPositionRad() {
-    if (_isMicrosystemDisabled) {
+    if (_isMicrosystemDisabled || (_pivotType == "no encoder")) {
       return 0.0;
     }
-
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-    return Units.rotationsToRadians(_pivotCancoder.getPosition().getValueAsDouble())
+    return Units.rotationsToRadians(
+               _pivotCancoder.getPosition().getValueAsDouble() * _encoderToPivotRatio
+           )
         + _ffCenterOfMassOffsetRad;
   }
 
@@ -386,15 +395,14 @@ public class Pivot extends Microsystem {
       return;
     }
     setFollowProfile(false);
-
-    _primaryMotor.setControl(
-        _requestedVelocityVoltage
-            // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-            .withVelocity(rps)
-            .withFeedForward(
-                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
-            )
-    );
+    _primaryMotor.setControl(_requestedVelocityVoltage.withVelocity(pivotRotToMotor(rps))
+                                 .withFeedForward(
+                                     withFF ? _pivotFF.calculate(
+                                         getFFPositionRad(),
+                                         Units.rotationsToRadians(pivotRotToMotor(rps))
+                                     )
+                                            : 0.0
+                                 ));
   }
 
   /**
@@ -690,15 +698,14 @@ public class Pivot extends Microsystem {
     _pivotSim.setInputVoltage(_primaryMotor.get() * RobotController.getBatteryVoltage());
     _pivotSim.update(TagalongConfiguration.LOOP_PERIOD_S);
 
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
     double prevSimVelo = _simVeloRPS;
-    _simVeloRPS = Units.radiansToRotations(_pivotSim.getVelocityRadPerSec());
-    _simRotations += Units.radiansToRotations(_pivotSim.getAngleRads());
+    _simVeloRPS = Units.radiansToRotations(motorToPivotRot(_pivotSim.getVelocityRadPerSec()));
+    _simRotations += Units.radiansToRotations(motorToPivotRot(_pivotSim.getAngleRads()));
     _simAccelRPS2 = (_simVeloRPS - prevSimVelo) / TagalongConfiguration.LOOP_PERIOD_S;
 
-    _pivotLigament.setAngle(Rotation2d.fromRadians(_pivotSim.getAngleRads()));
+    _pivotLigament.setAngle(Rotation2d.fromRadians(pivotRotToMotor(_simRotations)));
 
-    _pivotCancoderSim.setRawPosition(Units.radiansToRotations(_pivotSim.getAngleRads()));
+    _pivotCancoderSim.setRawPosition(motorToPivotRot(_pivotSim.getAngleRads()));
     _pivotCancoderSim.setVelocity(_simVeloRPS);
     _pivotCancoderSim.setSupplyVoltage(RobotController.getBatteryVoltage());
 
