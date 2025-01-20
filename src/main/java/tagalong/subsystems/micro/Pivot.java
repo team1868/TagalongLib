@@ -62,9 +62,9 @@ public class Pivot extends Microsystem {
    */
   protected double _encoderToPivotRatio;
   /**
-   * Pivot type used ("default", "unfused", "no encoder")
+   * Pivot type used
    */
-  protected String _pivotType;
+  protected PivotTypes _pivotType;
   /**
    * Default lower tolerance of the pivot in rotations,
    * Default upper tolerance of the pivot in rotations
@@ -293,7 +293,7 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled) {
       return 0.0;
     }
-    if (_pivotType == "no encoder") {
+    if (_pivotType == PivotTypes.noEncoder) {
       return motorRot / _motorToMechRatio;
     }
     return motorRot / (_encoderToPivotRatio * _motorToEncoderRatio);
@@ -309,7 +309,7 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled) {
       return 0.0;
     }
-    if (_pivotType == "noEncoder") {
+    if (_pivotType == PivotTypes.noEncoder) {
       return pivotRot * _motorToMechRatio;
     }
     return pivotRot * (_encoderToPivotRatio * _motorToEncoderRatio);
@@ -357,7 +357,7 @@ public class Pivot extends Microsystem {
    * @return offset position in rotations
    */
   public double getFFPositionRad() {
-    if (_isMicrosystemDisabled || (_pivotType == "no encoder")) {
+    if (_isMicrosystemDisabled || (_pivotType == PivotTypes.noEncoder)) {
       return 0.0;
     }
     return Units.rotationsToRadians(

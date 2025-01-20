@@ -18,6 +18,7 @@ import tagalong.controls.FeedforwardConstants;
 import tagalong.controls.PIDSGVAConstants;
 import tagalong.devices.Encoders;
 import tagalong.devices.Motors;
+import tagalong.subsystems.micro.PivotTypes;
 import tagalong.units.AccelerationUnits;
 import tagalong.units.DistanceUnits;
 import tagalong.units.VelocityUnits;
@@ -41,7 +42,7 @@ public class PivotConf extends MicrosystemConf {
   /**
    * Pivot type used ("default", "unfused", "no encoder")
    */
-  public final String pivotType;
+  public final PivotTypes pivotType;
   /**
    * Encoder type used for the pivot
    */
@@ -158,7 +159,7 @@ public class PivotConf extends MicrosystemConf {
    * @param motorDeviceIDs                  motor device ids
    * @param motorCanBus                     motor can bus
    * @param motorDirection                  motor directions
-   * @param pivotType                       pivot type ("default", "fused", or "no encoder")
+   * @param pivotType                       pivot type
    * @param encoderType                     encoder type used for the pivot
    * @param encoderDeviceID                 device id of the encoder
    * @param encoderCanBus                   can bus of the encoder
@@ -208,7 +209,7 @@ public class PivotConf extends MicrosystemConf {
       int[] motorDeviceIDs,
       String[] motorCanBus,
       InvertedValue[] motorDirection,
-      String pivotType,
+      PivotTypes pivotType,
       Encoders encoderType,
       int encoderDeviceID,
       String encoderCanBus,
