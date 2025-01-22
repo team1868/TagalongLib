@@ -28,7 +28,7 @@ public class RollerUnitTest {
   public final double powerTolerance = 1.0; // change
   public final double velocityTolerance = 1.0; // change
   public final double rotationTolerance = 1.0; // change
-  public final double angleToleranceDeg = 1.0;
+  public final double angleToleranceRot = 1.0;
 
   @BeforeEach
   void setUp() {
@@ -61,6 +61,36 @@ public class RollerUnitTest {
   @Test
   public void testProfileAngle(Roller roller, Angle goalAngle) {
     roller.setRollerProfile(goalAngle);
-    assertEquals(angleToleranceDeg, Math.abs(roller.getRollerPosition() - goalAngle.getDegrees()));
+    assertEquals(
+        angleToleranceRot, Math.abs(roller.getRollerPosition() - goalAngle.getRotations())
+    );
+  }
+
+  @Test
+  public void testProfileRotComplex(
+      Roller roller,
+      double goalPositionRot,
+      double goalVelocityMPS,
+      double maxVelocityMPS,
+      double maxAccelerationMPS2,
+      boolean setCurrentState
+  ) {
+    roller.setRollerProfile(
+        goalPositionRot, goalVelocityMPS, maxVelocityMPS, maxAccelerationMPS2, true
+    );
+    assertEquals(rotationTolerance, Math.abs(goalPositionRot - roller.getRollerPosition()));
+  }
+  public void testProfileAngComplex(
+      Roller roller,
+      double goalPositionRot,
+      double goalVelocityMPS,
+      double maxVelocityMPS,
+      double maxAccelerationMPS2,
+      boolean setCurrentState
+  ) {
+    roller.setRollerProfile(
+        goalPositionRot, goalVelocityMPS, maxVelocityMPS, maxAccelerationMPS2, true
+    );
+    assertEquals(rotationTolerance, Math.abs(goalPositionRot - roller.getRollerPosition()));
   }
 }

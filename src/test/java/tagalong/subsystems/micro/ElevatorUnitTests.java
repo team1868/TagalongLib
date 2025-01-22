@@ -38,8 +38,22 @@ public class ElevatorUnitTests {
     assertEquals(_velocityTolerance, Math.abs(velocity - elevator.getElevatorVelocityMPS()));
   }
   @Test
-  public void testProfile(Elevator elevator, double goalPosition, double goalVelocityMPS) {
-    elevator.setElevatorProfile(goalPosition, goalVelocityMPS);
+  public void testProfile(Elevator elevator, double height) {
+    elevator.setElevatorProfile(height);
+    assertEquals(_heightTolerance, Math.abs(height - elevator.getElevatorHeightM()));
+  }
+  @Test
+  public void testProfileComplex(
+      Elevator elevator,
+      double goalPosition,
+      double goalVelocityMPS,
+      double maxVelocityMPS,
+      double maxAccelerationMPS2,
+      boolean setCurrentState
+  ) {
+    elevator.setElevatorProfile(
+        goalPosition, goalVelocityMPS, maxVelocityMPS, maxAccelerationMPS2, true
+    );
     assertEquals(_heightTolerance, Math.abs(goalPosition - elevator.getElevatorHeightM()));
   }
 }

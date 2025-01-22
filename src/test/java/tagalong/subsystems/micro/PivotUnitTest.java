@@ -29,7 +29,7 @@ public class PivotUnitTest {
   public PivotConf _pivotConf;
   public final double powerTolerance = 1.0; // CHANGE
   public final double velocityTolerance = 1.0; // change
-  public final double angleToleranceDeg = 1.0; // change
+  public final double angleToleranceRot = 1.0; // change
 
   @BeforeEach
   void setUp() {
@@ -54,8 +54,48 @@ public class PivotUnitTest {
   }
 
   @Test
-  public void testProfileAngle(Pivot pivot, Angle goalPosition) {
-    pivot.setPivotProfile(goalPosition);
-    assertEquals(angleToleranceDeg, Math.abs(pivot.getPivotPosition() - goalPosition.getDegrees()));
+  public void testProfileAngle(Pivot pivot, Angle goalPositionRot) {
+    pivot.setPivotProfile(goalPositionRot);
+    assertEquals(
+        angleToleranceRot, Math.abs(pivot.getPivotPosition() - goalPositionRot.getRotations())
+    );
+  }
+
+  @Test
+  public void testProfileRot(Pivot pivot, double goalPositionRot) {
+    pivot.setPivotProfile(goalPositionRot);
+    assertEquals(angleToleranceRot, Math.abs(pivot.getPivotPosition() - goalPositionRot));
+  }
+
+  @Test
+  public void testProfileAngleComplex(
+      Pivot pivot,
+      Angle goalPositionRot,
+      double goalVelocityRPS,
+      double maxVelocityRPS,
+      double maxAccerlerationRPS2,
+      boolean setCurrentState
+  ) {
+    pivot.setPivotProfile(
+        goalPositionRot, goalVelocityRPS, maxVelocityRPS, maxAccerlerationRPS2, setCurrentState
+    );
+    assertEquals(
+        angleToleranceRot, Math.abs(pivot.getPivotPosition() - goalPositionRot.getRotations())
+    );
+  }
+
+  @Test
+  public void testProfileRotComplex(
+      Pivot pivot,
+      double goalPositionRot,
+      double goalVelocityRPS,
+      double maxVelocityRPS,
+      double maxAccerlerationRPS2,
+      boolean setCurrentState
+  ) {
+    pivot.setPivotProfile(
+        goalPositionRot, goalVelocityRPS, maxVelocityRPS, maxAccerlerationRPS2, setCurrentState
+    );
+    assertEquals(angleToleranceRot, Math.abs(pivot.getPivotPosition() - goalPositionRot));
   }
 }
