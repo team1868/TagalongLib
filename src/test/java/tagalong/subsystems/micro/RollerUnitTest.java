@@ -1,39 +1,66 @@
 package tagalong.subsystems.micro;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.ctre.phoenix6.hardware.CANcoder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.nio.file.attribute.GroupPrincipal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-// not sure which of these
 import org.junit.jupiter.api.Test;
 import tagalong.devices.Encoders;
 import tagalong.devices.Motors;
-import tagalong.measurements.*;
-import tagalong.subsystems.micro.Pivot;
+import tagalong.measurements.Angle;
 import tagalong.subsystems.micro.Roller;
-import tagalong.subsystems.micro.confs.PivotConf;
 import tagalong.subsystems.micro.confs.RollerConf;
 
 public class RollerUnitTest {
   static final double DELTA = 0.0;
-  private Roller _roller;
-  public RollerConf rollerConf;
-  private static final Motors driveMotor = Motors.FALCON500_FOC;
-  private static final int driveMotorID = 12;
+  public Roller _roller;
+  public RollerConf _rollerConf;
 
-  static final double rollerSpeed = 0.3; // super super basic test value
-  public RollerUnitTest(){};
+  public final double powerTolerance = 1.0; // change
+  public final double velocityTolerance = 1.0; // change
+  public final double rotationTolerance = 1.0; // change
+  public final double angleToleranceDeg = 1.0;
 
   @BeforeEach
-  void setup() {}
+  void setUp() {
+    _roller = new Roller(_rollerConf);
+  }
 
   @AfterEach
   void shutdown() throws Exception {
-    _roller.setBrakeMode(true);
+    _roller.setBrakeMode(true); // need for rollers?
   }
 
   @Test
-  public void testRollers() {
-    assertEquals(0.0, driveMotor.getVelocity().getValueAsDouble(), DELTA);
+  public void testPower(Roller roller, double power) {
+    roller.setRollerPower(power);
+    assertEquals(powerTolerance, Math.abs(roller.getRollerPower() - power));
+  }
+
+  @Test
+  public void testVelocity(Roller roller, double velocity) {
+    roller.setRollerVelocity(velocity, false); // change w/ FF?
+    assertEquals(velocityTolerance, Math.abs(roller.getRollerVelocity() - velocity));
+  }
+
+  @Test
+  public void testProfileRot(Roller roller, double goalPositionRot) {
+    roller.setRollerProfile(goalPositionRot);
+    assertEquals(rotationTolerance, Math.abs(roller.getRollerPosition()) - goalPositionRot);
+  }
+
+  @Test
+  public void testProfileAngle(Roller roller, Angle goalAngle) {
+    roller.setRollerProfile(goalAngle);
+    assertEquals(angleToleranceDeg, Math.abs(roller.getRollerPosition() - goalAngle.getDegrees()));
   }
 }

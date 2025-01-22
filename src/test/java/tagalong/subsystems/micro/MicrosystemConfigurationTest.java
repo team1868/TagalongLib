@@ -3,7 +3,6 @@ package tagalong.subsystems.micro;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import tagalong.subsystems.micro.confs.MicrosystemConf;
 
 public class MicrosystemConfigurationTest {
   @Test

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.nio.file.attribute.GroupPrincipal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +27,9 @@ public class PivotUnitTest {
   static final double kCANCoderDelayTime = 0.5; // same here
   public Pivot _pivot;
   public PivotConf _pivotConf;
-  public double tolerance = 0.1; // CHANGE
-  public Angle angleTolerance = new Angle(0.0);
+  public final double powerTolerance = 1.0; // CHANGE
+  public final double velocityTolerance = 1.0; // change
+  public final double angleToleranceDeg = 1.0; // change
 
   @BeforeEach
   void setUp() {
@@ -40,24 +42,20 @@ public class PivotUnitTest {
   }
 
   @Test
-  public boolean testPower(Pivot pivot, double power) {
+  public void testPower(Pivot pivot, double power) {
     pivot.setPivotPower(power);
-    assertEquals(tolerance, Math.abs(Math.abs(power - pivot.getPivotPower())));
+    assertEquals(powerTolerance, Math.abs(power - pivot.getPivotPower()));
   }
 
   @Test
-  public boolean testVelocity(Pivot pivot, double velocity) {
+  public void testVelocity(Pivot pivot, double velocity) {
     pivot.setPivotVelocity(velocity, false);
-    assertEquals(tolerance, Math.abs(Math.abs(velocity - pivot.getPivotVelocity())));
+    assertEquals(velocityTolerance, Math.abs(Math.abs(velocity - pivot.getPivotVelocity())));
   }
 
   @Test
-  public boolean testProfile(Pivot pivot, Angle goalPosition, double goalPositionRPS) {
-    pivot.setPivotProfile(goalPosition, goalPositionRPS);
-    if (pivot.getPivotPosition() == Math.abs(goalPosition - angleTolerance)) {
-      return true;
-    } else {
-      return false;
-    }
+  public void testProfileAngle(Pivot pivot, Angle goalPosition) {
+    pivot.setPivotProfile(goalPosition);
+    assertEquals(angleToleranceDeg, Math.abs(pivot.getPivotPosition() - goalPosition.getDegrees()));
   }
 }
