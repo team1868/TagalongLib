@@ -34,6 +34,9 @@ public class PivotUnfused extends Pivot {
    */
   public PivotUnfused(PivotConf conf) {
     super(conf);
+    if (_configuredMicrosystemDisable) {
+      return;
+    }
     _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
     _pivotCancoderConfiguration = _pivotConf.encoderConfig;
     configCancoder();

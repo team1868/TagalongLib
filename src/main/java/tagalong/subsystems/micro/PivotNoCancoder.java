@@ -24,6 +24,9 @@ public class PivotNoCancoder extends Pivot {
    */
   public PivotNoCancoder(PivotConf conf) {
     super(conf);
+    if (_configuredMicrosystemDisable) {
+      return;
+    }
     configAllDevices();
     configMotor();
   }

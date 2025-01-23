@@ -37,6 +37,9 @@ public class PivotFused extends Pivot {
    */
   public PivotFused(PivotConf conf) {
     super(conf);
+    if (_configuredMicrosystemDisable) {
+      return;
+    }
     configCancoder();
     configAllDevices();
     configMotor();
