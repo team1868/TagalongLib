@@ -6,12 +6,20 @@
 package tagalong.subsystems.micro;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import tagalong.TagalongConfiguration;
 import tagalong.subsystems.micro.confs.PivotConf;
 
@@ -45,20 +53,29 @@ public class PivotUnfused extends Pivot {
   }
 
   @Override
-  public double motorToPivotRot(double motorRot) {
+  public void followLastProfile() {
     if (_isMicrosystemDisabled) {
-      return 0.0;
+      return;
     }
-    return motorRot / (_encoderToPivotRatio * _motorToEncoderRatio);
-  }
 
-  @Override
-  public double pivotRotToMotor(double pivotRot) {
-    if (_isMicrosystemDisabled) {
-      return 0.0;
+    TrapezoidProfile.State nextState =
+        _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
+    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot, convert to motor units
+    _primaryMotor.setControl(
+        _requestedPositionVoltage
+            .withPosition(pivotRotToMotor(nextState.position))
+            // FeedForward must know the pivot rotation and other arguments in radians
+            .withFeedForward(
+                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
+            )
+    );
+
+    if (_isShuffleboardMicro) {
+      _targetPositionEntry.setDouble(nextState.position);
+      _targetVelocityEntry.setDouble(nextState.velocity);
     }
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-    return pivotRot * (_encoderToPivotRatio * _motorToEncoderRatio);
+
+    _curState = nextState;
   }
 
   @Override
@@ -82,7 +99,7 @@ public class PivotUnfused extends Pivot {
     _primaryMotor.setControl(
         _requestedVelocityVoltage
             // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-            .withVelocity(rps)
+            .withVelocity(pivotRotToMotor(rps))
             .withFeedForward(
                 withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
             )
@@ -125,6 +142,18 @@ public class PivotUnfused extends Pivot {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Initializes the pivot simulation
+   */
+  @Override
+  public void simulationInit() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+    super.simulationInit();
+    _pivotCancoderSim = _pivotCancoder.getSimState();
   }
 
   @Override

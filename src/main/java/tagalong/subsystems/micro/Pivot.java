@@ -12,7 +12,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
 import tagalong.measurements.Angle;
@@ -290,25 +293,6 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-
-    TrapezoidProfile.State nextState =
-        _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot, convert to motor units
-    _primaryMotor.setControl(
-        _requestedPositionVoltage
-            .withPosition(nextState.position)
-            // FeedForward must know the pivot rotation and other arguments in radians
-            .withFeedForward(
-                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
-            )
-    );
-
-    if (_isShuffleboardMicro) {
-      _targetPositionEntry.setDouble(nextState.position);
-      _targetVelocityEntry.setDouble(nextState.velocity);
-    }
-
-    _curState = nextState;
   }
 
   /**
@@ -345,21 +329,7 @@ public class Pivot extends Microsystem {
    * @param rps Desired velocity in rotations per second
    * @param withFF with feedforward
    */
-  public void setPivotVelocity(double rps, boolean withFF) {
-    if (_isMicrosystemDisabled) {
-      return;
-    }
-    setFollowProfile(false);
-
-    _primaryMotor.setControl(
-        _requestedVelocityVoltage
-            // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-            .withVelocity(rps)
-            .withFeedForward(
-                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
-            )
-    );
-  }
+  public void setPivotVelocity(double rps, boolean withFF) {}
 
   /**
    * Gets the current position of the pivot in rotations
@@ -368,7 +338,7 @@ public class Pivot extends Microsystem {
    *     they are fused
    */
   public double getPivotPosition() {
-    return getPrimaryMotorPosition();
+    return 0.0;
   }
 
   /**
@@ -378,7 +348,7 @@ public class Pivot extends Microsystem {
    *     they are fused
    */
   public double getPivotVelocity() {
-    return getPrimaryMotorVelocity();
+    return 0.0;
   }
 
   /**
@@ -585,7 +555,32 @@ public class Pivot extends Microsystem {
    * Initializes the pivot simulation
    */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+
+    _pivotSim = new SingleJointedArmSim(
+        _pivotConf.motorTypes[0].simSupplier.apply(_pivotConf.numMotors),
+        _motorToEncoderRatio * _encoderToPivotRatio,
+        _pivotConf.pivotMOI,
+        _pivotConf.pivotLengthM,
+        Units.rotationsToRadians(_minPositionRot),
+        Units.rotationsToRadians(_maxPositionRot),
+        true,
+        Units.rotationsToRadians(0)
+    );
+
+    _mechanism = new Mechanism2d(_pivotConf.mech2dDim, _pivotConf.mech2dDim);
+    SmartDashboard.putData("SIM: " + _pivotConf.name, _mechanism);
+
+    _root = _mechanism.getRoot(_pivotConf.name, _pivotConf.rootX, _pivotConf.rootY);
+    _pivotLigament = new MechanismLigament2d(_pivotConf.name, _pivotConf.pivotLengthM, 0.0);
+    _root.append(_pivotLigament);
+    _pivotLigament.setColor(new Color8Bit(255, 255, 255));
+
+    _primaryMotorSim = _primaryMotor.getSimState();
+  }
 
   /**
    * Runs the pivot simulation--sets motor and cancoder simulation fields and updates the visual

@@ -40,6 +40,8 @@ public class PivotFused extends Pivot {
     if (_configuredMicrosystemDisable) {
       return;
     }
+    _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
+    _pivotCancoderConfiguration = _pivotConf.encoderConfig;
     configCancoder();
     configAllDevices();
     configMotor();
@@ -149,6 +151,18 @@ public class PivotFused extends Pivot {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Initializes the pivot simulation
+   */
+  @Override
+  public void simulationInit() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+    super.simulationInit();
+    _pivotCancoderSim = _pivotCancoder.getSimState();
   }
 
   @Override
