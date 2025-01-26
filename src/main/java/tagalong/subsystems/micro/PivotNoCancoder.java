@@ -5,10 +5,6 @@
  */
 package tagalong.subsystems.micro;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -22,14 +18,6 @@ import tagalong.subsystems.micro.confs.PivotConf;
  * Pivot microsystem
  */
 public class PivotNoCancoder extends Pivot {
-  /**
-   * CANcoder device
-   */
-  public CANcoder _pivotCancoder;
-  /**
-   * Configuration for the CANcoder
-   */
-  protected CANcoderConfiguration _pivotCancoderConfiguration;
   /**
    * Constructs a pivot microsystem with the below configurations
    *
