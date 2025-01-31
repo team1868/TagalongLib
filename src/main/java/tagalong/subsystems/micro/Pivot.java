@@ -5,20 +5,12 @@
  */
 package tagalong.subsystems.micro;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -37,16 +29,6 @@ public class Pivot extends Microsystem {
    * Configuration for the pivot
    */
   public final PivotConf _pivotConf;
-
-  /* -------- Hardware: motors and sensors -------- */
-  /**
-   * CANcoder device
-   */
-  public CANcoder _pivotCancoder;
-  /**
-   * Configuration for the CANcoder
-   */
-  protected CANcoderConfiguration _pivotCancoderConfiguration;
 
   /* -------- Control: states and constants -------- */
   /**
@@ -146,9 +128,6 @@ public class Pivot extends Microsystem {
       _ffCenterOfMassOffsetRad = 0.0;
       return;
     }
-
-    _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
-
     _pivotFF = _pivotConf.feedForward;
     _defaultPivotLowerToleranceRot = _pivotConf.defaultLowerTolerance;
     _defaultPivotUpperToleranceRot = _pivotConf.defaultUpperTolerance;
@@ -165,8 +144,6 @@ public class Pivot extends Microsystem {
 
     _motorToEncoderRatio = _pivotConf.motorToEncoderRatio;
     _encoderToPivotRatio = _pivotConf.encoderToPivotRatio;
-
-    _pivotCancoderConfiguration = _pivotConf.encoderConfig;
 
     double minAbs = AlgebraicUtils.cppMod(_minPositionRot, 1.0);
     double maxAbs = AlgebraicUtils.cppMod(_maxPositionRot, 1.0);
@@ -192,10 +169,6 @@ public class Pivot extends Microsystem {
         System.out.println(_pivotConf.name + " failed to initialize!");
       }
     }
-
-    configCancoder();
-    configAllDevices();
-    configMotor();
   }
 
   /**
@@ -320,25 +293,6 @@ public class Pivot extends Microsystem {
     if (_isMicrosystemDisabled) {
       return;
     }
-
-    TrapezoidProfile.State nextState =
-        _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot, convert to motor units
-    _primaryMotor.setControl(
-        _requestedPositionVoltage
-            .withPosition(nextState.position)
-            // FeedForward must know the pivot rotation and other arguments in radians
-            .withFeedForward(
-                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
-            )
-    );
-
-    if (_isShuffleboardMicro) {
-      _targetPositionEntry.setDouble(nextState.position);
-      _targetVelocityEntry.setDouble(nextState.velocity);
-    }
-
-    _curState = nextState;
   }
 
   /**
@@ -348,13 +302,7 @@ public class Pivot extends Microsystem {
    * @return offset position in rotations
    */
   public double getFFPositionRad() {
-    if (_isMicrosystemDisabled) {
-      return 0.0;
-    }
-
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-    return Units.rotationsToRadians(_pivotCancoder.getPosition().getValueAsDouble())
-        + _ffCenterOfMassOffsetRad;
+    return 0.0;
   }
 
   /**
@@ -381,21 +329,7 @@ public class Pivot extends Microsystem {
    * @param rps Desired velocity in rotations per second
    * @param withFF with feedforward
    */
-  public void setPivotVelocity(double rps, boolean withFF) {
-    if (_isMicrosystemDisabled) {
-      return;
-    }
-    setFollowProfile(false);
-
-    _primaryMotor.setControl(
-        _requestedVelocityVoltage
-            // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-            .withVelocity(rps)
-            .withFeedForward(
-                withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
-            )
-    );
-  }
+  public void setPivotVelocity(double rps, boolean withFF) {}
 
   /**
    * Gets the current position of the pivot in rotations
@@ -404,7 +338,7 @@ public class Pivot extends Microsystem {
    *     they are fused
    */
   public double getPivotPosition() {
-    return getPrimaryMotorPosition();
+    return 0.0;
   }
 
   /**
@@ -414,7 +348,7 @@ public class Pivot extends Microsystem {
    *     they are fused
    */
   public double getPivotVelocity() {
-    return getPrimaryMotorVelocity();
+    return 0.0;
   }
 
   /**
@@ -591,28 +525,10 @@ public class Pivot extends Microsystem {
   }
 
   /**
-   * Configures the CANcoder according to specified configuration
-   */
-  private void configCancoder() {
-    if (_isMicrosystemDisabled) {
-      return;
-    }
-
-    _pivotCancoder.getConfigurator().apply(_pivotCancoderConfiguration);
-  }
-
-  /**
    * Configures the motor according to specified configuration
    */
-  private void configMotor() {
+  protected void configMotor() {
     for (int i = 0; i < _conf.numMotors; i++) {
-      _conf.motorConfig[i].withFeedback(
-          new FeedbackConfigs()
-              .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-              .withFeedbackRemoteSensorID(_pivotCancoder.getDeviceID())
-              .withRotorToSensorRatio(_pivotConf.motorToEncoderRatio)
-              .withSensorToMechanismRatio(_pivotConf.encoderToPivotRatio)
-      );
       _allMotors[i].getConfigurator().apply(_conf.motorConfig[i]);
     }
   }
@@ -632,18 +548,6 @@ public class Pivot extends Microsystem {
    */
   @Override
   public boolean motorResetConfig() {
-    if (_isMicrosystemDisabled) {
-      return false;
-    }
-    if (_primaryMotor.hasResetOccurred()) {
-      configAllDevices();
-      configMotor();
-      return true;
-    }
-    if (_pivotCancoder.hasResetOccurred()) {
-      configCancoder();
-      return true;
-    }
     return false;
   }
 
@@ -675,7 +579,6 @@ public class Pivot extends Microsystem {
     _root.append(_pivotLigament);
     _pivotLigament.setColor(new Color8Bit(255, 255, 255));
 
-    _pivotCancoderSim = _pivotCancoder.getSimState();
     _primaryMotorSim = _primaryMotor.getSimState();
   }
 
@@ -683,34 +586,7 @@ public class Pivot extends Microsystem {
    * Runs the pivot simulation--sets motor and cancoder simulation fields and updates the visual
    */
   @Override
-  public void simulationPeriodic() {
-    if (_isMicrosystemDisabled) {
-      return;
-    }
-    _pivotSim.setInputVoltage(_primaryMotor.get() * RobotController.getBatteryVoltage());
-    _pivotSim.update(TagalongConfiguration.LOOP_PERIOD_S);
-
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-    double prevSimVelo = _simVeloRPS;
-    _simVeloRPS = Units.radiansToRotations(_pivotSim.getVelocityRadPerSec());
-    _simRotations += Units.radiansToRotations(_pivotSim.getAngleRads());
-    _simAccelRPS2 = (_simVeloRPS - prevSimVelo) / TagalongConfiguration.LOOP_PERIOD_S;
-
-    _pivotLigament.setAngle(Rotation2d.fromRadians(_pivotSim.getAngleRads()));
-
-    _pivotCancoderSim.setRawPosition(Units.radiansToRotations(_pivotSim.getAngleRads()));
-    _pivotCancoderSim.setVelocity(_simVeloRPS);
-    _pivotCancoderSim.setSupplyVoltage(RobotController.getBatteryVoltage());
-
-    _primaryMotorSim.setRawRotorPosition(pivotRotToMotor(_simRotations));
-    _primaryMotorSim.setRotorVelocity(pivotRotToMotor(_simVeloRPS));
-    _primaryMotorSim.setRotorAcceleration(pivotRotToMotor(_simAccelRPS2));
-    _primaryMotorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
-
-    RoboRioSim.setVInVoltage(
-        BatterySim.calculateDefaultBatteryLoadedVoltage(_pivotSim.getCurrentDrawAmps())
-    );
-  }
+  public void simulationPeriodic() {}
 
   /**
    * Checks whether or not it's safe for the pivot to move
