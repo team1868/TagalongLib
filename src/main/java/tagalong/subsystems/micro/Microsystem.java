@@ -189,6 +189,9 @@ public class Microsystem {
    * Configures devices
    */
   public void configAllDevices() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
     for (int i = 0; i < _conf.numMotors; i++) {
       _allMotors[i].getConfigurator().apply(_conf.motorConfig[i]);
     }
@@ -210,6 +213,9 @@ public class Microsystem {
    * @param enabled whether or not the robot is enabled
    */
   public void setBrakeMode(boolean enabled) {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
     for (int i = 0; i < _conf.numMotors; i++) {
       _allMotors[i].setNeutralMode(
           enabled ? _conf.motorEnabledBrakeMode[i] : _conf.motorDisabledBrakeMode[i]
@@ -221,6 +227,9 @@ public class Microsystem {
    *
    */
   public void updateAllPIDSGVA() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
     // update all 3 slots from shuffleboard
     double s0p = _conf.motorConfig[0].Slot0.kP;
     double s0i = _conf.motorConfig[0].Slot0.kI;
@@ -364,6 +373,9 @@ public class Microsystem {
    * and whether it is in PID or feedforward tuning mode
    */
   public void configTuningModes() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
     _isPIDTuningMicro = TagalongConfiguration.pidTuningMicrosystems.contains(_conf.name);
     _isFFTuningMicro = TagalongConfiguration.ffTuningMicrosystems.contains(_conf.name);
     _isShuffleboardMicro = _isFFTuningMicro || _isPIDTuningMicro
@@ -375,6 +387,9 @@ public class Microsystem {
    * system
    */
   public void configShuffleboard() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
     String name = _conf.name;
     ShuffleboardTab tuningTab = Shuffleboard.getTab("Tuning tab");
     ShuffleboardLayout microLayout = tuningTab.getLayout(name, BuiltInLayouts.kGrid)
@@ -531,6 +546,9 @@ public class Microsystem {
    * Resets the tolerance timer, must be ran as part of command initialization
    */
   public void resetToleranceTimer() {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
     _toleranceTimer.reset();
   }
 
@@ -544,6 +562,9 @@ public class Microsystem {
    * @return True if the microsystem has been in tolerance the required duration
    */
   public boolean checkToleranceTime(boolean inTolerance, double requiredDurationS) {
+    if (_isMicrosystemDisabled) {
+      return false;
+    }
     if (inTolerance) {
       _toleranceTimer.start();
       return _toleranceTimer.hasElapsed(requiredDurationS);
@@ -558,6 +579,9 @@ public class Microsystem {
    * @return sim root
    */
   public MechanismRoot2d getRoot() {
+    if (_isMicrosystemDisabled) {
+      return null;
+    }
     return _root;
   }
 }
