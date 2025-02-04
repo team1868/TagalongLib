@@ -414,8 +414,9 @@ public class Microsystem {
 
     if (_isFFTuningMicro) {
       _KSEntry = microLayout.add(name + " kS", 0.0).withPosition(2, 0).getEntry();
-      _KVEntry = microLayout.add(name + " kV", 0.0).withPosition(2, 1).getEntry();
-      _KAEntry = microLayout.add(name + " kA", 0.0).withPosition(2, 2).getEntry();
+      _KGEntry = microLayout.add(name + " kG", 0.0).withPosition(2, 1).getEntry();
+      _KVEntry = microLayout.add(name + " kV", 0.0).withPosition(2, 2).getEntry();
+      _KAEntry = microLayout.add(name + " kA", 0.0).withPosition(2, 3).getEntry();
     }
   }
 
