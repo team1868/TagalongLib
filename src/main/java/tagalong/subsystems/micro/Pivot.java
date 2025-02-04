@@ -182,7 +182,7 @@ public class Pivot extends Microsystem {
       _primaryMotor.set(0.0);
     } else if (_isFFTuningMicro && _trapProfile.isFinished(_profileTimer.get())) {
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(
-          _pivotFF.getKs() + _pivotFF.getKs() * Math.cos(getFFPositionRad())
+          _pivotFF.getKs() + _pivotFF.getKg() * Math.cos(getFFPositionRad())
       ));
     }
 
@@ -218,7 +218,7 @@ public class Pivot extends Microsystem {
           _KAEntry.getDouble(_pivotFF.getKa())
       );
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(
-          _pivotFF.getKs() + _pivotFF.getKs() * Math.cos(getFFPositionRad())
+          _pivotFF.getKs() + _pivotFF.getKg() * Math.cos(getFFPositionRad())
       ));
     }
   }
