@@ -156,8 +156,9 @@ public class Roller extends Microsystem {
     } else if (motorResetConfig()) {
       setRollerProfile(getRollerPosition(), 0.0);
       _primaryMotor.set(0.0);
+    } else if (_isFFTuningMicro && _trapProfile.isFinished(_profileTimer.get())) {
+      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_rollerFF.getKs()));
     }
-
     if (_followProfile) {
       followLastProfile();
     }
@@ -281,8 +282,8 @@ public class Roller extends Microsystem {
   }
 
   /**
-   * Calculates the next state according to the trapezoidal profile and requests the roller motor(s)
-   * to arrive at the next position with feedforward
+   * Calculates the next state according to the trapezoidal profile and requests the roller
+   * motor(s) to arrive at the next position with feedforward
    */
   public void followLastProfile() {
     if (_isMicrosystemDisabled) {
