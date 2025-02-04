@@ -60,11 +60,8 @@ public class PivotUnfused extends Pivot {
 
     TrapezoidProfile.State nextState =
         _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
-    // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot, convert to motor units
     _primaryMotor.setControl(
-        _requestedPositionVoltage
-            .withPosition(pivotRotToMotor(nextState.position))
-            // FeedForward must know the pivot rotation and other arguments in radians
+        _requestedPositionVoltage.withPosition(pivotRotToMotor(nextState.position))
             .withFeedForward(
                 _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
             )
@@ -97,9 +94,7 @@ public class PivotUnfused extends Pivot {
     setFollowProfile(false);
 
     _primaryMotor.setControl(
-        _requestedVelocityVoltage
-            // FUTURE DEV: modify to allow for unfused or not 1:1 with pivot
-            .withVelocity(pivotRotToMotor(rps))
+        _requestedVelocityVoltage.withVelocity(pivotRotToMotor(rps))
             .withFeedForward(
                 withFF ? _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(rps)) : 0.0
             )
