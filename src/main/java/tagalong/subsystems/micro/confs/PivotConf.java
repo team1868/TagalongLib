@@ -286,7 +286,7 @@ public class PivotConf extends MicrosystemConf {
 
     MagnetSensorConfigs magnetSensorConfigs =
         new MagnetSensorConfigs()
-            .withMagnetOffset(encoderConfigMagnetOffsetValue)
+            .withMagnetOffset(this.encoderConfigMagnetOffsetValue)
             .withSensorDirection(
                 encoderConfigClockwisePositive ? SensorDirectionValue.Clockwise_Positive
                                                : SensorDirectionValue.CounterClockwise_Positive
