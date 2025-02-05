@@ -7,7 +7,7 @@ plugins {
     // id 'google-test'
     id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
     // id 'edu.wpi.first.NativeUtils' version '2025.1.1'
-    id "edu.wpi.first.GradleRIO" version "2025.1.1"
+    id "edu.wpi.first.GradleRIO" version "2025.2.1"
     id 'edu.wpi.first.GradleJni' version '1.1.0'
     id 'edu.wpi.first.GradleVsCode' version '2.1.0'
     // id 'com.diffplug.spotless' version '6.25.0'
@@ -60,14 +60,14 @@ dependencies {
     // implementation group: 'com.ctre.phoenix', name: 'wpiapi-java', version: '5.33.0'
     implementation group: 'org.littletonrobotics.akit', name: 'akit-java', version: '4.0.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
-    implementation group: 'edu.wpi.first.wpilibj', name: 'wpilibj-java', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.wpiutil', name: 'wpiutil-java', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.wpimath', name: 'wpimath-java', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.wpilibNewCommands', name: 'wpilibNewCommands-java', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.wpiunits', name: 'wpiunits-java', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-java', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-jni', version: '2025.1.1'
-    implementation group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '2025.1.1'
+    implementation group: 'edu.wpi.first.wpilibj', name: 'wpilibj-java', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.wpiutil', name: 'wpiutil-java', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.wpimath', name: 'wpimath-java', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.wpilibNewCommands', name: 'wpilibNewCommands-java', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.wpiunits', name: 'wpiunits-java', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-java', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-jni', version: '2025.2.1'
+    implementation group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '2025.2.1'
 
     implementation 'us.hebi.quickbuf:quickbuf-runtime:1.4'
 
