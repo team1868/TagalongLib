@@ -411,6 +411,8 @@ public class Elevator extends Microsystem {
       setFollowProfile(false);
       setElevatorProfile(getElevatorHeightM(), 0.0);
       _primaryMotor.set(0.0);
+    } else if (_isFFTuningMicro && _trapProfile.isFinished(_profileTimer.get())) {
+      _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_elevatorFF.getKs()));
     }
     if (_followProfile) {
       followLastProfile();
