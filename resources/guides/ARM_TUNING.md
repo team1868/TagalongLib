@@ -20,27 +20,32 @@ This guide assumes the magnet offset in the cancoder has already been properly c
 Use shuffleboard to change the Ks value on the fly without re-deploying code\! The feedforward constants will update every time the robot is disabled and then re-enabled. In the case of the pivot microsystem, when in feedforward tuning mode experimental voltages are automatically applied to assist in tuning the arm. This includes a dynamic voltage application that applies voltage dynamically
 
 1. Put the pivot microsystem in feedforward tuning mode by adding it to the static `ffTuningMicrosystems` list in the `TagalongConfigurations` class  
-2. 0 all PIDSGVA values in the pivot microsystem configuration file  
+2. Zero all PIDSGVA values in the pivot microsystem configuration file  
 3. Deploy the robot code  
-4. Use the following procedure to find **Vmax and Vmin**  
-   - Choose an **easily recreatable** arm angle and record the angle. We will call refer to this angle as **refAngle**  
-      - The refAngle **must be identical** each time  
+4. Use the following procedure to find **Vmax1 and Vmin1**  
+   - Choose an **easily recreatable** arm angle and record the angle. We will call refer to this angle as **refAngle1**  
+      - RefAngle1 **must be identical** each time  
       - We recommend using a digital level that can be found cheaply online or at hardware stores. In a pinch a phone can be used, but we do not recommend it because the camera, buttons, and case create an inconsistent measurement surface.  
-   - Apply **increasing** voltages to find the maximum voltage that does not create movement at the refAngle  
+   - Apply **increasing** voltages to find the maximum voltage that does not create movement at refAngle1  
+      - `Vmax1 = Ks + Kg * cos(refAngle1 + comOffset)` 
       - Use shuffleboard to change the Ks value on the fly without re-deploying code\! The feedforward constants will update every time the robot is disabled and then re-enabled.    
-      - Because the microsystem is in feedforward tuning mode, `Ks + Kg * cos(refAngle + comOffset)` will automatically be applied to the motors.  
-   - Apply **decreasing** voltages to find the minimum voltage that does not create movement at the refAngle  
-      - `Vmin = -Ks + Kg * cos(refAngle + comOffset)`  
+      - Because the microsystem is in feedforward tuning mode, `Ks + Kg * cos(refAngle1 + comOffset)` will automatically be applied to the motors.  
+   - Apply **decreasing** voltages to find the minimum voltage that does not create movement at refAngle1  
+      - `Vmin1 = -Ks + Kg * cos(refAngle1 + comOffset)`  
 5. Derive Ks  
-   - `Kg * cos(refAngle + comOffset)` cancels out when finding Ks  
-      - `Vmax - Ks = Kg * cos(refAngle + comOffset)`  
-      - `Vmin + Ks = Kg * cos(refAngle + comOffset)`  
-      - `Vmax - Ks = Vmin + Ks`  
-      - `Ks = (Vmax - Vmin) / 2`  
-6. Derive Kg and comOffset  
-   - Substituting for Ks, leaves the following system of equations  
-      - `Kg * cos(refAngle + comOffset) = Vmax - Ks`  
-      - `Kg * cos(refAngle + comOffset) = Vmin + Ks`  
+   - `Vmax1 - Ks = Kg * cos(refAngle1 + comOffset)`  
+   - `Vmin1 + Ks = Kg * cos(refAngle1 + comOffset)`  
+   - `Vmax1 - Ks = Vmin1 + Ks`  
+   - `Ks = (Vmax1 - Vmin1) / 2`  
+6. Repeat the procedure in **step 4** to find a new Vmax that we'll call **Vmax2** 
+   - Choose a different arm angle that is preferably far from  **refAngle1** and easily recreatable. Record the angle. We will call refer to it as **refAngle2**  
+   - Apply **increasing** voltages to find the maximum voltage that does not create movement at refAngle2  
+   - `Vmax2 = Ks + Kg * cos(refAngle2 + comOffset)` 
+
+7. Derive Kg and comOffset 
+   - Substituting Ks into the Vmax1 and Vmax2 equations, we are left with the following system of equations
+      - `Vmax1 = (Vmax1 - Vmin1) / 2 + Kg * cos(refAngle1 + comOffset)`  
+      - `Vmax2 = (Vmax1 - Vmin1) / 2 + Kg * cos(refAngle2 + comOffset)`  
    - Use a calculator to solve for Kg and comOffset
 
 ### Stage 2: Verify Kg, Ks, and comOffset
