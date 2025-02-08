@@ -55,12 +55,13 @@ public class PivotFused extends Pivot {
 
     TrapezoidProfile.State nextState =
         _trapProfile.calculate(TagalongConfiguration.LOOP_PERIOD_S, _curState, _goalState);
-    _primaryMotor.setControl(
-        _requestedPositionVoltage.withPosition(nextState.position)
-            .withFeedForward(
-                _pivotFF.calculate(getFFPositionRad(), Units.rotationsToRadians(nextState.velocity))
-            )
-    );
+    // _primaryMotor.setControl(
+    //     _requestedPositionVoltage.withPosition(nextState.position)
+    //         .withFeedForward(
+    //             _pivotFF.calculate(getFFPositionRad(),
+    //             Units.rotationsToRadians(nextState.velocity))
+    //         )
+    // );
 
     if (_isShuffleboardMicro) {
       _targetPositionEntry.setDouble(nextState.position);
