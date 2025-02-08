@@ -73,6 +73,10 @@ public class PivotToAbsoluteCmd<T extends TagalongSubsystemBase & PivotAugment>
     if (!_startedMovement && _pivot.isSafeToMove()) {
       _startedMovement = true;
       _scopedGoalPositionRot =
+          // goal 0.5, current -2.4, can't travel -2.4 to -2.5
+          // place in scope, would place this at -2.5
+          // but our legal movement for this example is -2.4 to -1.5
+
           AlgebraicUtils.placeInScopeRot(_pivot.getPivotPosition(), _goalPositionRot);
       if (_scopedGoalPositionRot < _pivot._minPositionRot) {
         _scopedGoalPositionRot += 1.0;
@@ -80,7 +84,7 @@ public class PivotToAbsoluteCmd<T extends TagalongSubsystemBase & PivotAugment>
       if (_scopedGoalPositionRot > _pivot._maxPositionRot) {
         _scopedGoalPositionRot -= 1.0;
       }
-
+      System.out.println("\ngoal scoped: " + _scopedGoalPositionRot + "\n ");
       _pivot.setPivotProfile(
           _pivot.clampPivotPosition(_scopedGoalPositionRot), 0.0, _maxVelocityRPS
       );
