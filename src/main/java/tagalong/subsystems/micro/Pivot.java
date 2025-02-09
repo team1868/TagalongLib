@@ -635,7 +635,7 @@ public class Pivot extends Microsystem {
       case 2:
         return _maxPositionRot;
       case 1:
-        return abs;
+        return placePivotInClosestRot(getPivotPosition(), abs);
       case 0:
       default:
         return _minPositionRot;
