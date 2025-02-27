@@ -205,6 +205,9 @@ public class Microsystem {
                                      : _conf.motorEnabledBrakeMode[i]
       );
     }
+    for (int i = 0; i < _conf.numMotors; i++) {
+      _allMotors[i].setPosition(0.0);
+    }
   }
 
   /**
