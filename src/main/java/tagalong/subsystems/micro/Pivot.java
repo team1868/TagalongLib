@@ -187,6 +187,16 @@ public class Pivot extends Microsystem {
     }
   }
 
+  // Override to ensure the position config happens after the devices are configured
+  @Override
+  public void configAllDevices() {
+    super.configAllDevices();
+
+    // FUTURE DEV: Look into if all motors or just the leader need their positions set?
+    // for (var motor : _allMotors) motor.setPosition(0.0);
+    _primaryMotor.setPosition(0.0);
+  }
+
   /**
    * Periodic update function
    */
