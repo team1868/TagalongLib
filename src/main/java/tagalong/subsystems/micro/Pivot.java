@@ -530,10 +530,10 @@ public class Pivot extends Microsystem {
     _goalState.position = (_absoluteRangeRot < 1.0 ? absoluteClamp(goalPositionRot)
                                                    : clampPivotPosition(goalPositionRot))
         + _profileTargetOffset;
-    System.out.println(
-        "goal: " + goalPositionRot + "\ngoal clamped: " + absoluteClamp(goalPositionRot)
-        + "\nabs range: " + (_absoluteRangeRot < 1.0)
-    );
+    // System.out.println(
+    //     "goal: " + goalPositionRot + "\ngoal clamped: " + absoluteClamp(goalPositionRot)
+    //     + "\nabs range: " + (_absoluteRangeRot < 1.0)
+    // );
     _trapProfile = new TrapezoidProfile(
         (maxVelocityRPS >= _maxVelocityRPS || maxAccelerationRPS2 >= _maxAccelerationRPS2)
             ? _pivotConf.trapezoidalLimits
