@@ -154,6 +154,10 @@ public class Microsystem {
    * Visual representation of the elevator
    */
   protected Mechanism2d _mechanism;
+  /**
+   * Precomputed logic to disable on enable and on disable motor reconfigurations
+   */
+  protected final boolean _onEnableBrakeModeReconfigure;
 
   // null parser is a configured disablement
   /**
@@ -170,8 +174,15 @@ public class Microsystem {
     if (_configuredMicrosystemDisable) {
       _allMotors = new TalonFX[0];
       _primaryMotor = null;
+      _onEnableBrakeModeReconfigure = true;
       return;
     }
+
+    boolean brakeModeMismatch = false;
+    for (int i = 0; i < _conf.numMotors; i++) {
+      brakeModeMismatch |= _conf.motorEnabledBrakeMode[i] != _conf.motorDisabledBrakeMode[i];
+    }
+    _onEnableBrakeModeReconfigure = brakeModeMismatch;
 
     // Initialize motors
     _allMotors = new TalonFX[conf.numMotors];
@@ -284,7 +295,9 @@ public class Microsystem {
       return;
     }
 
-    setBrakeMode(true);
+    if (_onEnableBrakeModeReconfigure) {
+      setBrakeMode(true);
+    }
 
     if (_isPIDTuningMicro) {
       updateAllPIDSGVA();
@@ -428,7 +441,9 @@ public class Microsystem {
       return;
     }
 
-    setBrakeMode(false);
+    if (_onEnableBrakeModeReconfigure) {
+      setBrakeMode(false);
+    }
   }
 
   /**
