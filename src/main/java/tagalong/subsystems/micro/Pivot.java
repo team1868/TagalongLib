@@ -107,6 +107,8 @@ public class Pivot extends Microsystem {
    */
   protected MechanismLigament2d _pivotLigament;
 
+  protected double _offset = 0.0;
+
   /**
    * Constructs a pivot microsystem with the below configurations
    *
@@ -138,16 +140,15 @@ public class Pivot extends Microsystem {
     // current position
     double min = _pivotConf.rotationalMin;
     double max = _pivotConf.rotationalMax;
-    while (min >= getPivotPosition()) {
-      min -= 1.0;
-      max -= 1.0;
+
+    while (min + _offset >= getPivotPosition()) {
+      _offset -= 1.0;
     }
-    while (max <= getPivotPosition()) {
-      min += 1.0;
-      max += 1.0;
+    while (max + _offset <= getPivotPosition()) {
+      _offset += 1.0;
     }
-    _minPositionRot = min;
-    _maxPositionRot = max;
+    _minPositionRot = min + _offset;
+    _maxPositionRot = max + _offset;
 
     _absoluteRangeRot = _maxPositionRot - _minPositionRot;
     _maxVelocityRPS = _pivotConf.trapezoidalLimitsVelocity;
@@ -163,7 +164,7 @@ public class Pivot extends Microsystem {
 
     double minAbs = AlgebraicUtils.cppMod(_minPositionRot, 1.0);
     double maxAbs = AlgebraicUtils.cppMod(_maxPositionRot, 1.0);
-    double halfUnusedRange = (_absoluteRangeRot) / 2.0;
+    double halfUnusedRange = (1.0 -_absoluteRangeRot) / 2.0;
     double midUnused = maxAbs + halfUnusedRange;
 
     if (midUnused > 1.0) {
@@ -537,13 +538,15 @@ public class Pivot extends Microsystem {
     }
 
     _goalState.velocity = goalVelocityRPS;
-    _goalState.position = (_absoluteRangeRot < 1.0 ? absoluteClamp(goalPositionRot)
-                                                   : clampPivotPosition(goalPositionRot))
-        + _profileTargetOffset;
-    // System.out.println(
-    //     "goal: " + goalPositionRot + "\ngoal clamped: " + absoluteClamp(goalPositionRot)
-    //     + "\nabs range: " + (_absoluteRangeRot < 1.0)
-    // );
+    _goalState.position = clampPivotPosition(goalPositionRot);
+    // NOTE + TODO: code removed due to compensating an already compensated value
+    // _goalState.position = (_absoluteRangeRot < 1.0 ? absoluteClamp(goalPositionRot + _offset)
+    //                                                : clampPivotPosition(goalPositionRot + _offset))
+    //     + _profileTargetOffset;
+    System.out.println(
+        "goal: " + goalPositionRot + "\ngoal clamped: " + absoluteClamp(goalPositionRot + _offset)
+        + "\nabs range: " + (_absoluteRangeRot < 1.0) + " offset: " + _offset
+    );
     _trapProfile = new TrapezoidProfile(
         (maxVelocityRPS >= _maxVelocityRPS || maxAccelerationRPS2 >= _maxAccelerationRPS2)
             ? _pivotConf.trapezoidalLimits
@@ -696,5 +699,9 @@ public class Pivot extends Microsystem {
    */
   public MechanismLigament2d getPivotLigament() {
     return _pivotLigament;
+  }
+
+  public double getScopeOffset(){
+    return _offset;
   }
 }

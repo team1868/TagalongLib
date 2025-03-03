@@ -90,7 +90,7 @@ public class PivotToAbsoluteCmd<T extends TagalongSubsystemBase & PivotAugment>
       }
       // System.out.println("\ngoal scoped: " + _scopedGoalPositionRot + "\n ");
       _pivot.setPivotProfile(
-          _pivot.clampPivotPosition(_scopedGoalPositionRot), 0.0, _maxVelocityRPS
+          _scopedGoalPositionRot, 0.0, _maxVelocityRPS
       );
     }
 

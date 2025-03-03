@@ -104,7 +104,7 @@ public class ElevateXCmd<T extends TagalongSubsystemBase & ElevatorAugment>
   public boolean isFinished() {
     // Command is finished when the profile is finished AND
     // Either the tolerance is bypassed or in tolerance for the desired duration
-    return _elevator.isProfileFinished()
+    return _startedMovement && _elevator.isProfileFinished()
         && (!_requireInTolerance
             || _elevator.checkToleranceTime(
                 _elevator.isElevatorInTolerance(_lowerBoundM, _upperBoundM),

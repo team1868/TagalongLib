@@ -30,6 +30,7 @@ public class PivotFused extends Pivot {
    * Configuration for the CANcoder
    */
   protected CANcoderConfiguration _pivotCancoderConfiguration;
+  protected boolean _fusedCancoderSetup = false;
   /**
    * Constructs a pivot microsystem with the below configurations
    *
@@ -40,11 +41,18 @@ public class PivotFused extends Pivot {
     if (_configuredMicrosystemDisable) {
       return;
     }
-    _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
-    _pivotCancoderConfiguration = _pivotConf.encoderConfig;
-    configCancoder();
-    configAllDevices();
-    configMotor();
+    setupFusedCancoder();
+  }
+
+  private void setupFusedCancoder() {
+    if(!_fusedCancoderSetup) {
+      _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
+      _pivotCancoderConfiguration = _pivotConf.encoderConfig;
+      configCancoder();
+      configAllDevices();
+      configMotor();
+      _fusedCancoderSetup = true;
+    }
   }
 
   @Override
@@ -94,6 +102,7 @@ public class PivotFused extends Pivot {
 
   @Override
   public double getPivotPosition() {
+    setupFusedCancoder();
     return getPrimaryMotorPosition();
   }
 

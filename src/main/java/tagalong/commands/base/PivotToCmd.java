@@ -49,6 +49,8 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    * The maximum velocity of the pivot, in rotations per second, during this command
    */
   private double _maxVelocityRPS;
+
+  private double _maxAccelerationRPS2;
   /**
    * Whether or not the pivot has started moving
    */
@@ -64,7 +66,9 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
   public void execute() {
     if (!_startedMovement) {
       _startedMovement = true;
-      _pivot.setPivotProfile(_pivot.clampPivotPosition(_goalPositionRot), 0.0, _maxVelocityRPS);
+      _pivot.setPivotProfile(
+          _goalPositionRot + _pivot.getScopeOffset(), 0.0, _maxVelocityRPS, _maxAccelerationRPS2
+      );
     }
 
     if (_startedMovement) {
@@ -120,7 +124,13 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    *
    */
   public PivotToCmd(T pivot, Angle goalPosition, boolean holdPositionAfter) {
-    this(pivot, goalPosition, holdPositionAfter, pivot.getPivot()._maxVelocityRPS);
+    this(
+        pivot,
+        goalPosition,
+        holdPositionAfter,
+        pivot.getPivot()._maxVelocityRPS,
+        pivot.getPivot()._maxAccelerationRPS2
+    );
   }
 
   /**
@@ -134,7 +144,14 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    *
    */
   public PivotToCmd(int id, T pivot, Angle goalPosition, boolean holdPositionAfter) {
-    this(id, pivot, goalPosition, holdPositionAfter, pivot.getPivot(id)._maxVelocityRPS);
+    this(
+        id,
+        pivot,
+        goalPosition,
+        holdPositionAfter,
+        pivot.getPivot(id)._maxVelocityRPS,
+        pivot.getPivot(id)._maxAccelerationRPS2
+    );
   }
 
   /**
@@ -148,12 +165,19 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    *                          second, during this command
    */
 
-  public PivotToCmd(T pivot, Angle goalPosition, boolean holdPositionAfter, double maxVelocityRPS) {
+  public PivotToCmd(
+      T pivot,
+      Angle goalPosition,
+      boolean holdPositionAfter,
+      double maxVelocityRPS,
+      double maxAccelerationRPS2
+  ) {
     this(
         pivot,
         goalPosition,
         holdPositionAfter,
         maxVelocityRPS,
+        maxAccelerationRPS2,
         pivot.getPivot()._defaultPivotLowerToleranceRot,
         pivot.getPivot()._defaultPivotUpperToleranceRot
     );
@@ -172,7 +196,12 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    */
 
   public PivotToCmd(
-      int id, T pivot, Angle goalPosition, boolean holdPositionAfter, double maxVelocityRPS
+      int id,
+      T pivot,
+      Angle goalPosition,
+      boolean holdPositionAfter,
+      double maxVelocityRPS,
+      double maxAccelerationRPS2
   ) {
     this(
         id,
@@ -180,34 +209,9 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
         goalPosition,
         holdPositionAfter,
         maxVelocityRPS,
-        pivot.getPivot(id)._defaultPivotLowerToleranceRot,
+        maxAccelerationRPS2,
         pivot.getPivot(id)._defaultPivotUpperToleranceRot
     );
-  }
-
-  /**
-   * Constructor that creates the command with the below parameters.
-   *
-   * @param pivot             Tagalong Subsystem containing a pivot microsystem
-   * @param goalPosition      Goal pivot positon
-   * @param holdPositionAfter If the pivot should hold position when the command
-   *                          completes
-   * @param maxVelocityRPS    The maximum velocity of the pivot, in rotations per
-   *                          second, during this command
-   * @param toleranceRot       The number of rotations short of or beyond the
-   *                          target position the
-   *                          pivot can be while still being considered in
-   *                          tolerance
-   */
-
-  public PivotToCmd(
-      T pivot,
-      Angle goalPosition,
-      boolean holdPositionAfter,
-      double maxVelocityRPS,
-      double toleranceRot
-  ) {
-    this(pivot, goalPosition, holdPositionAfter, maxVelocityRPS, toleranceRot, toleranceRot);
   }
 
   /**
@@ -231,33 +235,27 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
       Angle goalPosition,
       boolean holdPositionAfter,
       double maxVelocityRPS,
+      double maxAccelerationRPS2,
       double toleranceRot
   ) {
-    this(id, pivot, goalPosition, holdPositionAfter, maxVelocityRPS, toleranceRot, toleranceRot);
+    this(
+        id,
+        pivot,
+        goalPosition,
+        holdPositionAfter,
+        maxVelocityRPS,
+        maxAccelerationRPS2,
+        toleranceRot,
+        toleranceRot
+    );
   }
-
-  /**
-   * Constructor that creates the command with the below parameters.
-   *
-   * @param pivot             Tagalong Subsystem containing a pivot microsystem
-   * @param goalPosition      Goal pivot positon
-   * @param holdPositionAfter If the pivot should hold position when the command
-   *                          completes
-   * @param maxVelocityRPS    The maximum velocity of the pivot, in rotations per
-   *                          second, during this command
-   * @param lowerToleranceRot The number of rotations short of the target position
-   *                          the pivot can be
-   *                          while still being considered in tolerance
-   * @param upperToleranceRot The number of rotations beyond the target position
-   *                          the pivot can be
-   *                          while still being considered in tolerance
-   */
 
   public PivotToCmd(
       T pivot,
       Angle goalPosition,
       boolean holdPositionAfter,
       double maxVelocityRPS,
+      double maxAccelerationRPS2,
       double lowerToleranceRot,
       double upperToleranceRot
   ) {
@@ -266,6 +264,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
         goalPosition,
         holdPositionAfter,
         maxVelocityRPS,
+        maxAccelerationRPS2,
         lowerToleranceRot,
         upperToleranceRot,
         -1.0
@@ -296,6 +295,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
       Angle goalPosition,
       boolean holdPositionAfter,
       double maxVelocityRPS,
+      double maxAccelerationRPS2,
       double lowerToleranceRot,
       double upperToleranceRot
   ) {
@@ -305,6 +305,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
         goalPosition,
         holdPositionAfter,
         maxVelocityRPS,
+        maxAccelerationRPS2,
         lowerToleranceRot,
         upperToleranceRot,
         -1.0
@@ -336,15 +337,18 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
       Angle goalPosition,
       boolean holdPositionAfter,
       double maxVelocityRPS,
+      double maxAccelerationRPS2,
       double lowerToleranceRot,
       double upperToleranceRot,
       double requiredInToleranceDurationS
   ) {
     this(
+        0,
         pivot,
         goalPosition.getRotations(),
         holdPositionAfter,
         maxVelocityRPS,
+        maxAccelerationRPS2,
         lowerToleranceRot,
         upperToleranceRot,
         requiredInToleranceDurationS
@@ -378,6 +382,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
       Angle goalPosition,
       boolean holdPositionAfter,
       double maxVelocityRPS,
+      double maxAccelerationRPS2,
       double lowerToleranceRot,
       double upperToleranceRot,
       double requiredInToleranceDurationS
@@ -388,6 +393,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
         goalPosition.getRotations(),
         holdPositionAfter,
         maxVelocityRPS,
+        maxAccelerationRPS2,
         lowerToleranceRot,
         upperToleranceRot,
         requiredInToleranceDurationS
@@ -464,6 +470,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
       double goalPosition,
       boolean holdPositionAfter,
       double maxVelocityRPS,
+      double maxAccelerationRPS2,
       double lowerToleranceRot,
       double upperToleranceRot,
       double requiredInToleranceDurationS
@@ -472,6 +479,7 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
     _goalPositionRot = goalPosition;
     _holdPositionAfter = holdPositionAfter;
     _maxVelocityRPS = maxVelocityRPS;
+    _maxAccelerationRPS2 = maxAccelerationRPS2;
     _lowerBoundRot = _goalPositionRot - Math.abs(lowerToleranceRot);
     _upperBoundRot = _goalPositionRot + Math.abs(upperToleranceRot);
     _requiredInToleranceDurationS = requiredInToleranceDurationS;
