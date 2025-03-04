@@ -75,7 +75,7 @@ public class PivotXCmd<T extends TagalongSubsystemBase & PivotAugment> extends T
   public void initialize() {
     _startedMovement = false;
     _startAngleRot = _pivot.getPivotPosition();
-    _goalAngleRot = _pivot.clampPivotPosition(_startAngleRot + _relativeMovementRot);
+    _goalAngleRot = _startAngleRot + _relativeMovementRot;
     _lowerBoundRot = _goalAngleRot - _lowerToleranceRot;
     _upperBoundRot = _goalAngleRot + _upperToleranceRot;
   }
@@ -102,7 +102,7 @@ public class PivotXCmd<T extends TagalongSubsystemBase & PivotAugment> extends T
   public boolean isFinished() {
     // Command is finished when the profile is finished AND
     // Either the tolerance is bypassed or in tolerance for the desired duration
-    return _pivot.isProfileFinished()
+    return _startedMovement && _pivot.isProfileFinished()
         && (!_requireInTolerance
             || _pivot.checkToleranceTime(
                 _pivot.isPivotInTolerance(_lowerBoundRot, _upperBoundRot),

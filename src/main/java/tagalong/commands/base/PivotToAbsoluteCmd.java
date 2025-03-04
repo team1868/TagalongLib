@@ -80,10 +80,7 @@ public class PivotToAbsoluteCmd<T extends TagalongSubsystemBase & PivotAugment>
       if (_scopedGoalPositionRot > _pivot._maxPositionRot) {
         _scopedGoalPositionRot -= 1.0;
       }
-
-      _pivot.setPivotProfile(
-          _pivot.clampPivotPosition(_scopedGoalPositionRot), 0.0, _maxVelocityRPS
-      );
+      _pivot.setPivotProfile(_scopedGoalPositionRot, 0.0, _maxVelocityRPS);
     }
 
     if (_startedMovement) {

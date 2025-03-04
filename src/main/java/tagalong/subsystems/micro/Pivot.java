@@ -107,6 +107,8 @@ public class Pivot extends Microsystem {
    */
   protected MechanismLigament2d _pivotLigament;
 
+  protected double _scopeOffset = 0.0;
+
   /**
    * Constructs a pivot microsystem with the below configurations
    *
@@ -131,8 +133,23 @@ public class Pivot extends Microsystem {
     _pivotFF = _pivotConf.feedForward;
     _defaultPivotLowerToleranceRot = _pivotConf.defaultLowerTolerance;
     _defaultPivotUpperToleranceRot = _pivotConf.defaultUpperTolerance;
-    _minPositionRot = _pivotConf.rotationalMin;
-    _maxPositionRot = _pivotConf.rotationalMax;
+    // NOTE: This (temporarily) resolves an issue with an absolute encoder that boots out of range
+    // TODO: generalize this logic to better handle the CTRE encoder boot location and how it tends
+    // to play jump rope with 0 and is seemingly unpredictable
+    // Needs to deal with > 360 range and booting where the min AND max can never contain the
+    // current position
+    double min = _pivotConf.rotationalMin;
+    double max = _pivotConf.rotationalMax;
+
+    while (min + _scopeOffset >= getPivotPosition()) {
+      _scopeOffset -= 1.0;
+    }
+    while (max + _scopeOffset <= getPivotPosition()) {
+      _scopeOffset += 1.0;
+    }
+    _minPositionRot = min + _scopeOffset;
+    _maxPositionRot = max + _scopeOffset;
+
     _absoluteRangeRot = _maxPositionRot - _minPositionRot;
     _maxVelocityRPS = _pivotConf.trapezoidalLimitsVelocity;
     _maxAccelerationRPS2 = _pivotConf.trapezoidalLimitsAcceleration;
@@ -147,7 +164,7 @@ public class Pivot extends Microsystem {
 
     double minAbs = AlgebraicUtils.cppMod(_minPositionRot, 1.0);
     double maxAbs = AlgebraicUtils.cppMod(_maxPositionRot, 1.0);
-    double halfUnusedRange = (_absoluteRangeRot) / 2.0;
+    double halfUnusedRange = (1.0 - _absoluteRangeRot) / 2.0;
     double midUnused = maxAbs + halfUnusedRange;
 
     if (midUnused > 1.0) {
@@ -169,6 +186,16 @@ public class Pivot extends Microsystem {
         System.out.println(_pivotConf.name + " failed to initialize!");
       }
     }
+  }
+
+  // Override to ensure the position config happens after the devices are configured
+  @Override
+  public void configAllDevices() {
+    super.configAllDevices();
+
+    // FUTURE DEV: Look into if all motors or just the leader need their positions set?
+    // for (var motor : _allMotors) motor.setPosition(0.0);
+    _primaryMotor.setPosition(0.0);
   }
 
   /**
@@ -511,9 +538,13 @@ public class Pivot extends Microsystem {
     }
 
     _goalState.velocity = goalVelocityRPS;
-    _goalState.position = (_absoluteRangeRot < 1.0 ? absoluteClamp(goalPositionRot)
-                                                   : clampPivotPosition(goalPositionRot))
-        + _profileTargetOffset;
+    _goalState.position = clampPivotPosition(goalPositionRot);
+    // NOTE + TODO: code removed due to compensating an already compensated value
+    // _goalState.position = (_absoluteRangeRot < 1.0 ? absoluteClamp(goalPositionRot +
+    // _scopeOffset)
+    //                                                : clampPivotPosition(goalPositionRot +
+    //                                                _scopeOffset))
+    //     + _profileTargetOffset;
 
     _trapProfile = new TrapezoidProfile(
         (maxVelocityRPS >= _maxVelocityRPS || maxAccelerationRPS2 >= _maxAccelerationRPS2)
@@ -616,7 +647,7 @@ public class Pivot extends Microsystem {
       case 2:
         return _maxPositionRot;
       case 1:
-        return abs;
+        return placePivotInClosestRot(getPivotPosition(), abs);
       case 0:
       default:
         return _minPositionRot;
@@ -667,5 +698,9 @@ public class Pivot extends Microsystem {
    */
   public MechanismLigament2d getPivotLigament() {
     return _pivotLigament;
+  }
+
+  public double getScopeOffset() {
+    return _scopeOffset;
   }
 }

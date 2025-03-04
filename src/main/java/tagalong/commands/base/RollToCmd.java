@@ -82,7 +82,7 @@ public class RollToCmd<T extends TagalongSubsystemBase & RollerAugment> extends 
   public boolean isFinished() {
     // Command is finished when the profile is finished AND
     // Either the tolerance is bypassed or in tolerance for the desired duration
-    return _roller.isProfileFinished()
+    return _startedMovement && _roller.isProfileFinished()
         && (!_requireInTolerance
             || _roller.checkToleranceTime(
                 _roller.isRollerInTolerance(_lowerBoundRot, _upperBoundRot),

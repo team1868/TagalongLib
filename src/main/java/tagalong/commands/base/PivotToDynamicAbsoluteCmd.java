@@ -61,7 +61,7 @@ public class PivotToDynamicAbsoluteCmd<T extends TagalongSubsystemBase & PivotAu
   @Override
   public void execute() {
     // if pivot has not started moving, check for legal states
-    _goalPositionRot = _pivot.clampPivotPosition(_goalSupplierRot.getAsDouble());
+    _goalPositionRot = _goalSupplierRot.getAsDouble();
     _scopedGoalPositionRot =
         AlgebraicUtils.placeInScopeRot(_pivot.getPivotPosition(), _goalPositionRot);
     if (_scopedGoalPositionRot < _pivot._minPositionRot) {
@@ -70,7 +70,6 @@ public class PivotToDynamicAbsoluteCmd<T extends TagalongSubsystemBase & PivotAu
     if (_scopedGoalPositionRot > _pivot._maxPositionRot) {
       _scopedGoalPositionRot -= 1.0;
     }
-    _scopedGoalPositionRot = _pivot.clampPivotPosition(_scopedGoalPositionRot);
 
     if (_startedMovement) {
       _pivot.setPivotProfile(

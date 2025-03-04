@@ -56,7 +56,7 @@ public class PivotToDynamicCmd<T extends TagalongSubsystemBase & PivotAugment>
   @Override
   public void execute() {
     // if pivot has not started moving, check for legal states
-    _goalPositionRot = _pivot.clampPivotPosition(_goalSupplierRot.getAsDouble());
+    _goalPositionRot = _goalSupplierRot.getAsDouble();
     if (_startedMovement) {
       _pivot.setPivotProfile(_goalPositionRot, 0.0, _maxVelocityRPS);
       _pivot.followLastProfile();
