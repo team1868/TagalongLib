@@ -195,7 +195,6 @@ public class Microsystem {
     for (int i = 0; i < _conf.numMotors; i++) {
       _allMotors[i].getConfigurator().apply(_conf.motorConfig[i]);
     }
-
     for (int i = 1; i < _conf.numMotors; i++) {
       _allMotors[i].setControl(new StrictFollower(_primaryMotor.getDeviceID()));
     }
