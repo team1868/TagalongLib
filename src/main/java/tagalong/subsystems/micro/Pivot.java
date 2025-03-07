@@ -5,8 +5,10 @@
  */
 package tagalong.subsystems.micro;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.littletonrobotics.junction.Logger;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
 import tagalong.measurements.Angle;
@@ -138,13 +141,22 @@ public class Pivot extends Microsystem {
     // to play jump rope with 0 and is seemingly unpredictable
     // Needs to deal with > 360 range and booting where the min AND max can never contain the
     // current position
-    double min = _pivotConf.rotationalMin;
-    double max = _pivotConf.rotationalMax;
-
-    while (min + _scopeOffset >= getPivotPosition()) {
+    int count = 0;
+    while (_primaryMotor.getPosition().getStatus() != StatusCode.OK && count <= 1000) {
+      System.out.println(_pivotConf.name + " not ok " + count++);
+    }
+    if (count > 1000) {
+      System.out.println(_pivotConf.name + " failed to initialize!");
+    }
+    double average = (_pivotConf.rotationalMin + _pivotConf.rotationalMax) / 2.0;
+    double pivotPosition = getPivotPosition();
+    Logger.recordOutput("initial pivot position", pivotPosition);
+    double min = average - 0.5;
+    double max = average + 0.5;
+    while (min + _scopeOffset >= pivotPosition) {
       _scopeOffset -= 1.0;
     }
-    while (max + _scopeOffset <= getPivotPosition()) {
+    while (max + _scopeOffset <= pivotPosition) {
       _scopeOffset += 1.0;
     }
     _minPositionRot = min + _scopeOffset;
@@ -177,15 +189,15 @@ public class Pivot extends Microsystem {
       _values = new double[] {maxAbs, midUnused, minAbs, 1.0};
       _ids = new int[] {1, 2, 0, 1};
     }
-    if (IterativeRobotBase.isReal()) {
-      int count = 0;
-      // while (!_primaryMotor.isAlive() && count <= 1000) {
-      // System.out.println(_pivotConf.name + " not alive " + (count++));
-      // }
-      if (count >= 1000) {
-        System.out.println(_pivotConf.name + " failed to initialize!");
-      }
-    }
+    // if (IterativeRobotBase.isReal()) {
+    //   int count = 0;
+    //   // while (!_primaryMotor.isAlive() && count <= 1000) {
+    //   // System.out.println(_pivotConf.name + " not alive " + (count++));
+    //   // }
+    //   if (count >= 1000) {
+    //     System.out.println(_pivotConf.name + " failed to initialize!");
+    //   }
+    // }
   }
 
   // Override to ensure the position config happens after the devices are configured
@@ -547,7 +559,7 @@ public class Pivot extends Microsystem {
     //     + _profileTargetOffset;
 
     _trapProfile = new TrapezoidProfile(
-        (maxVelocityRPS >= _maxVelocityRPS || maxAccelerationRPS2 >= _maxAccelerationRPS2)
+        (maxVelocityRPS > _maxVelocityRPS || maxAccelerationRPS2 > _maxAccelerationRPS2)
             ? _pivotConf.trapezoidalLimits
             : new TrapezoidProfile.Constraints(maxVelocityRPS, maxAccelerationRPS2)
     );

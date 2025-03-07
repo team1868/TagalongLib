@@ -318,7 +318,7 @@ public class Elevator extends Microsystem {
     _goalState.velocity = goalVelocityMPS;
 
     _trapProfile = new TrapezoidProfile(
-        (maxVelocityMPS >= _maxVelocityMPS || maxAccelerationMPS2 >= _maxAccelerationMPS2)
+        (maxVelocityMPS > _maxVelocityMPS || maxAccelerationMPS2 > _maxAccelerationMPS2)
             ? _elevatorConf.trapezoidalLimits
             : new TrapezoidProfile.Constraints(maxVelocityMPS, maxAccelerationMPS2)
     );

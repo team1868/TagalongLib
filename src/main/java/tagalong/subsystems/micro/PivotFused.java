@@ -45,7 +45,7 @@ public class PivotFused extends Pivot {
   }
 
   private void setupFusedCancoder() {
-    if(!_fusedCancoderSetup) {
+    if (!_fusedCancoderSetup) {
       _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
       _pivotCancoderConfiguration = _pivotConf.encoderConfig;
       configCancoder();

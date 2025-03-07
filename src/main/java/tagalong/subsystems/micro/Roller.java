@@ -460,7 +460,7 @@ public class Roller extends Microsystem {
     _goalState.velocity = goalVelocityRPS;
 
     _trapProfile = new TrapezoidProfile(
-        (maxVelocityRPS >= _maxVelocityRPS || maxAccelerationRPS2 >= _maxAccelerationRPS2)
+        (maxVelocityRPS > _maxVelocityRPS || maxAccelerationRPS2 > _maxAccelerationRPS2)
             ? _rollerConf.trapezoidalLimits
             : new TrapezoidProfile.Constraints(maxVelocityRPS, maxAccelerationRPS2)
     );
