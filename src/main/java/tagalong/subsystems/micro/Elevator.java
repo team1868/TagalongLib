@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.littletonrobotics.junction.Logger;
 import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
 import tagalong.measurements.Height;
@@ -161,6 +162,7 @@ public class Elevator extends Microsystem {
     }
 
     _curState = nextState;
+    Logger.recordOutput(_conf.name + " next state", nextState.position);
   }
 
   /**
@@ -408,6 +410,9 @@ public class Elevator extends Microsystem {
     } else if (_isFFTuningMicro && _trapProfile.isFinished(_profileTimer.get())) {
       _primaryMotor.setControl(_requestedPositionVoltage.withFeedForward(_elevatorFF.getKs()));
     }
+    Logger.recordOutput(_conf.name + " motor reset config", motorResetConfig());
+    Logger.recordOutput(_conf.name + " profile velocity", _curState.velocity);
+    Logger.recordOutput(_conf.name + " profile state", _curState.position);
     if (_followProfile) {
       followLastProfile();
     }
