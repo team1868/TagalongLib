@@ -338,6 +338,13 @@ public class Microsystem {
     return _primaryMotor;
   }
 
+  public TalonFX getOtherMotor(int id) {
+    if (_isMicrosystemDisabled) {
+      return new TalonFX(id);
+    }
+    return _allMotors[id];
+  }
+
   /**
    * @return position of the primary motor, 0.0 if system is disabled
    */
@@ -461,7 +468,7 @@ public class Microsystem {
    * @param followProfile whether or not to follow the trapezoidal profile
    */
   public void setFollowProfile(boolean followProfile) {
-    if (!(_isMicrosystemDisabled)) {
+    if (!_isMicrosystemDisabled) {
       _followProfile = followProfile;
     }
   }

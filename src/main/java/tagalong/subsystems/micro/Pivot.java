@@ -10,13 +10,11 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import tagalong.TagalongConfiguration;
 import tagalong.math.AlgebraicUtils;
 import tagalong.measurements.Angle;
 import tagalong.subsystems.micro.confs.PivotConf;
@@ -47,12 +45,12 @@ public class Pivot extends Microsystem {
   /**
    * Absolute range of pivot movement in rotations
    */
-  public final double _absoluteRangeRot;
+  public double _absoluteRangeRot;
   /**
    * Minimum position of the pivot in rotations,
    * Maximum position of the pivot in rotations
    */
-  public final double _minPositionRot, _maxPositionRot;
+  public double _minPositionRot, _maxPositionRot;
   /**
    * Maximum velocity of the pivot in rotations per second,
    * Maximum acceleration of the pivot in rotations per second squared
@@ -121,9 +119,6 @@ public class Pivot extends Microsystem {
     if (_configuredMicrosystemDisable) {
       _defaultPivotLowerToleranceRot = 0.0;
       _defaultPivotUpperToleranceRot = 0.0;
-      _absoluteRangeRot = 0.0;
-      _minPositionRot = 0.0;
-      _maxPositionRot = 0.0;
       _maxVelocityRPS = 0.0;
       _maxAccelerationRPS2 = 0.0;
       _profileTargetOffset = 0.0;
@@ -138,19 +133,7 @@ public class Pivot extends Microsystem {
     // to play jump rope with 0 and is seemingly unpredictable
     // Needs to deal with > 360 range and booting where the min AND max can never contain the
     // current position
-    double min = _pivotConf.rotationalMin;
-    double max = _pivotConf.rotationalMax;
 
-    while (min + _scopeOffset >= getPivotPosition()) {
-      _scopeOffset -= 1.0;
-    }
-    while (max + _scopeOffset <= getPivotPosition()) {
-      _scopeOffset += 1.0;
-    }
-    _minPositionRot = min + _scopeOffset;
-    _maxPositionRot = max + _scopeOffset;
-
-    _absoluteRangeRot = _maxPositionRot - _minPositionRot;
     _maxVelocityRPS = _pivotConf.trapezoidalLimitsVelocity;
     _maxAccelerationRPS2 = _pivotConf.trapezoidalLimitsAcceleration;
     _profileTargetOffset = _pivotConf.profileOffsetValue;
@@ -162,30 +145,33 @@ public class Pivot extends Microsystem {
     _motorToEncoderRatio = _pivotConf.motorToEncoderRatio;
     _encoderToPivotRatio = _pivotConf.encoderToPivotRatio;
 
-    double minAbs = AlgebraicUtils.cppMod(_minPositionRot, 1.0);
-    double maxAbs = AlgebraicUtils.cppMod(_maxPositionRot, 1.0);
-    double halfUnusedRange = (1.0 - _absoluteRangeRot) / 2.0;
-    double midUnused = maxAbs + halfUnusedRange;
+    _minPositionRot = _pivotConf.rotationalMin;
+    _maxPositionRot = _pivotConf.rotationalMax;
 
-    if (midUnused > 1.0) {
-      _values = new double[] {midUnused - 1.0, minAbs, maxAbs, 1.0};
-      _ids = new int[] {2, 0, 1, 2};
-    } else if (_minPositionRot > 0.0) {
-      _values = new double[] {minAbs, maxAbs, midUnused, 1.0};
-      _ids = new int[] {0, 1, 2, 0};
-    } else {
-      _values = new double[] {maxAbs, midUnused, minAbs, 1.0};
-      _ids = new int[] {1, 2, 0, 1};
-    }
-    if (IterativeRobotBase.isReal()) {
-      int count = 0;
-      // while (!_primaryMotor.isAlive() && count <= 1000) {
-      // System.out.println(_pivotConf.name + " not alive " + (count++));
-      // }
-      if (count >= 1000) {
-        System.out.println(_pivotConf.name + " failed to initialize!");
-      }
-    }
+    // double minAbs = AlgebraicUtils.cppMod(_minPositionRot, 1.0);
+    // double maxAbs = AlgebraicUtils.cppMod(_maxPositionRot, 1.0);
+    // double halfUnusedRange = (1.0 - _absoluteRangeRot) / 2.0;
+    // double midUnused = maxAbs + halfUnusedRange;
+
+    // if (midUnused > 1.0) {
+    //   _values = new double[] {midUnused - 1.0, minAbs, maxAbs, 1.0};
+    //   _ids = new int[] {2, 0, 1, 2};
+    // } else if (_minPositionRot > 0.0) {
+    //   _values = new double[] {minAbs, maxAbs, midUnused, 1.0};
+    //   _ids = new int[] {0, 1, 2, 0};
+    // } else {
+    //   _values = new double[] {maxAbs, midUnused, minAbs, 1.0};
+    //   _ids = new int[] {1, 2, 0, 1};
+    // }
+    // if (IterativeRobotBase.isReal()) {
+    //   int count = 0;
+    //   // while (!_primaryMotor.isAlive() && count <= 1000) {
+    //   // System.out.println(_pivotConf.name + " not alive " + (count++));
+    //   // }
+    //   if (count >= 1000) {
+    //     System.out.println(_pivotConf.name + " failed to initialize!");
+    //   }
+    // }
   }
 
   // Override to ensure the position config happens after the devices are configured
@@ -547,7 +533,7 @@ public class Pivot extends Microsystem {
     //     + _profileTargetOffset;
 
     _trapProfile = new TrapezoidProfile(
-        (maxVelocityRPS >= _maxVelocityRPS || maxAccelerationRPS2 >= _maxAccelerationRPS2)
+        (maxVelocityRPS > _maxVelocityRPS || maxAccelerationRPS2 > _maxAccelerationRPS2)
             ? _pivotConf.trapezoidalLimits
             : new TrapezoidProfile.Constraints(maxVelocityRPS, maxAccelerationRPS2)
     );

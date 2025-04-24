@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import org.littletonrobotics.junction.Logger;
 import tagalong.TagalongConfiguration;
 import tagalong.subsystems.micro.confs.PivotConf;
 
@@ -41,18 +42,35 @@ public class PivotFused extends Pivot {
     if (_configuredMicrosystemDisable) {
       return;
     }
-    setupFusedCancoder();
-  }
-
-  private void setupFusedCancoder() {
-    if(!_fusedCancoderSetup) {
-      _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
-      _pivotCancoderConfiguration = _pivotConf.encoderConfig;
-      configCancoder();
-      configAllDevices();
-      configMotor();
-      _fusedCancoderSetup = true;
+    _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
+    _pivotCancoderConfiguration = _pivotConf.encoderConfig;
+    configCancoder();
+    configAllDevices();
+    configMotor();
+    _pivotCancoder.getAbsolutePosition().waitForUpdate(0.5);
+    _primaryMotor.getPosition().waitForUpdate(0.5);
+    // int count = 0;
+    // while (_primaryMotor.getPosition().getStatus() != StatusCode.OK && count <= 1000) {
+    //   System.out.println(_pivotConf.name + " not ok " + count++);
+    // }
+    // if (count > 1000) {
+    //   System.out.println(_pivotConf.name + " failed to initialize!");
+    // }
+    double pivotPosition = getPivotPosition();
+    Logger.recordOutput(_conf.name + " initial pivot position", pivotPosition);
+    double average = (_pivotConf.rotationalMin + _pivotConf.rotationalMax) / 2.0;
+    double min = average - 0.5;
+    double max = average + 0.5;
+    while (min + _scopeOffset > pivotPosition) {
+      _scopeOffset -= 1.0;
     }
+    while (max + _scopeOffset < pivotPosition) {
+      _scopeOffset += 1.0;
+    }
+    _minPositionRot = min + _scopeOffset;
+    _maxPositionRot = max + _scopeOffset;
+
+    _absoluteRangeRot = _maxPositionRot - _minPositionRot;
   }
 
   @Override
@@ -76,6 +94,7 @@ public class PivotFused extends Pivot {
     }
 
     _curState = nextState;
+    Logger.recordOutput(_conf.name + "pivot next state", nextState.position);
   }
 
   @Override
@@ -102,7 +121,6 @@ public class PivotFused extends Pivot {
 
   @Override
   public double getPivotPosition() {
-    setupFusedCancoder();
     return getPrimaryMotorPosition();
   }
 
@@ -120,6 +138,10 @@ public class PivotFused extends Pivot {
     }
 
     _pivotCancoder.getConfigurator().apply(_pivotCancoderConfiguration);
+  }
+
+  public CANcoder getPivotCancoder() {
+    return _pivotCancoder;
   }
 
   @Override
