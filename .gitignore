@@ -149,6 +149,7 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
+gradle.properties
 
 # # VS Code Specific Java Settings
 .classpath
