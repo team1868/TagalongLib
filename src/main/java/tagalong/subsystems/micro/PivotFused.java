@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import tagalong.TagalongConfiguration;
+import tagalong.devices.TagalongCANBus;
 import tagalong.subsystems.micro.confs.PivotConf;
 
 /**
@@ -49,7 +50,10 @@ public class PivotFused extends Pivot {
 
   private void setupFusedCancoder() {
     if (!_fusedCancoderSetup) {
-      _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
+      _pivotCancoder = new CANcoder(
+          _pivotConf.encoderDeviceID,
+          TagalongCANBus.getOrRegisterPhoenixCANBus(_pivotConf.encoderCanBus)
+      );
       _pivotCancoderConfiguration = _pivotConf.encoderConfig;
       configCancoder();
       configAllDevices();

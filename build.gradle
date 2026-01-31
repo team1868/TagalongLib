@@ -63,9 +63,9 @@ dependencies {
     implementation group: 'edu.wpi.first.wpimath', name: 'wpimath-java', version: '2026.2.1'
     implementation group: 'edu.wpi.first.wpilibNewCommands', name: 'wpilibNewCommands-java', version: '2026.2.1'
     implementation group: 'edu.wpi.first.wpiunits', name: 'wpiunits-java', version: '2026.2.1'
-    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-java', version: '2026.1.1-beta-1'
+    implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-java', version: '2026.2.1'
     implementation group: 'edu.wpi.first.ntcore', name: 'ntcore-jni', version: '2025.3.2'
-    implementation group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '2026.1.1-beta-1'
+    implementation group: 'edu.wpi.first.cscore', name: 'cscore-java', version: '2026.1.1'
 
     implementation 'us.hebi.quickbuf:quickbuf-runtime:1.4'
 

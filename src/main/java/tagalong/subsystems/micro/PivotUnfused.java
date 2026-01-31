@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import tagalong.TagalongConfiguration;
+import tagalong.devices.TagalongCANBus;
 import tagalong.subsystems.micro.confs.PivotConf;
 
 /**
@@ -45,7 +46,10 @@ public class PivotUnfused extends Pivot {
     if (_configuredMicrosystemDisable) {
       return;
     }
-    _pivotCancoder = new CANcoder(_pivotConf.encoderDeviceID, _pivotConf.encoderCanBus);
+    _pivotCancoder = new CANcoder(
+        _pivotConf.encoderDeviceID,
+        TagalongCANBus.getOrRegisterPhoenixCANBus(_pivotConf.encoderCanBus)
+    );
     _pivotCancoderConfiguration = _pivotConf.encoderConfig;
     configCancoder();
     configAllDevices();

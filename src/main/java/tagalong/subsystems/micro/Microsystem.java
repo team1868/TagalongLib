@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import tagalong.TagalongConfiguration;
 import tagalong.controls.PIDSGVAConstants;
+import tagalong.devices.TagalongCANBus;
 import tagalong.subsystems.micro.confs.MicrosystemConf;
 
 /**
@@ -187,7 +188,9 @@ public class Microsystem {
     // Initialize motors
     _allMotors = new TalonFX[conf.numMotors];
     for (int i = 0; i < conf.numMotors; i++) {
-      _allMotors[i] = new TalonFX(conf.motorDeviceIDs[i], conf.motorCanBus[i]);
+      _allMotors[i] = new TalonFX(
+          conf.motorDeviceIDs[i], TagalongCANBus.getOrRegisterPhoenixCANBus(conf.motorCanBus[i])
+      );
     }
     _primaryMotor = _allMotors[0];
     // FUTURE DEV: Inject this here rather than robot builder

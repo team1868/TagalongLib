@@ -6,7 +6,6 @@
 
 package tagalong.subsystems.micro.confs;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -19,7 +18,6 @@ import tagalong.controls.FeedforwardConstants;
 import tagalong.controls.PIDSGVAConstants;
 import tagalong.devices.Encoders;
 import tagalong.devices.Motors;
-import tagalong.devices.TagalongCANBus;
 import tagalong.units.AccelerationUnits;
 import tagalong.units.DistanceUnits;
 import tagalong.units.VelocityUnits;
@@ -52,7 +50,7 @@ public class PivotConf extends MicrosystemConf {
   /**
    * CAN bus of the encoder
    */
-  public final CANBus encoderCanBus;
+  public final String encoderCanBus;
   /**
    * Ratio between the motor and encoder
    */
@@ -276,7 +274,7 @@ public class PivotConf extends MicrosystemConf {
     );
     this.encoderType = encoderType;
     this.encoderDeviceID = encoderDeviceID;
-    this.encoderCanBus = TagalongCANBus.getOrRegisterPhoenixCANBus(encoderCanBus);
+    this.encoderCanBus = encoderCanBus;
     this.encoderToPivotRatio = super.calculateGearRatio(encoderToPivotRatio);
     this.motorToEncoderRatio =
         super.calculateGearRatio(motorToPivotRatio) / this.encoderToPivotRatio;
