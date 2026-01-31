@@ -1,11 +1,12 @@
 /**
- * Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+ * Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
  * Open Source Software; you may modify and/or share it under the terms of
  * the 3-Clause BSD License found in the root directory of this project.
  */
 
 package tagalong.subsystems.micro.confs;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
 import tagalong.controls.PIDSGVAConstants;
 import tagalong.devices.Motors;
+import tagalong.devices.TagalongCANBus;
 import tagalong.units.AccelerationUnits;
 import tagalong.units.DistanceUnits;
 import tagalong.units.VelocityUnits;
@@ -52,7 +54,7 @@ public class MicrosystemConf {
   /**
    * The can bus of the motors
    */
-  public final String[] motorCanBus;
+  public final CANBus[] motorCanBus;
   /**
    * The motor directionality
    */
@@ -167,7 +169,6 @@ public class MicrosystemConf {
 
     this.motorTypes = motorTypes;
     this.motorDeviceIDs = motorDeviceIDs;
-    this.motorCanBus = motorCanBus;
     this.motorDirection = motorDirection;
     this.motorEnabledBrakeMode = motorEnabledBrakeMode;
     this.motorDisabledBrakeMode = motorDisabledBrakeMode;
@@ -182,8 +183,10 @@ public class MicrosystemConf {
     this.motorToMechRatio = calculateGearRatio(gearRatio);
     assert (this.motorToMechRatio > 0.0);
 
+    this.motorCanBus = new CANBus[numMotors];
     motorConfig = new TalonFXConfiguration[numMotors];
     for (int i = 0; i < numMotors; i++) {
+      this.motorCanBus[i] = TagalongCANBus.getOrRegisterPhoenixCANBus(motorCanBus[i]);
       motorConfig[i] = Motors.getDefaults();
       motorConfig[i].MotorOutput.Inverted = motorDirection[i];
       motorConfig[i].MotorOutput.NeutralMode = motorDisabledBrakeMode[i];

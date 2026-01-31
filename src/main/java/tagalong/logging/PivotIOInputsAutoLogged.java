@@ -12,10 +12,10 @@ public class PivotIOInputsAutoLogged
     extends PivotIO.PivotIOInputs implements LoggableInputs, Cloneable {
   @Override
   public void toLog(LogTable table) {
-    table.put("PivotPositionRot", pivotPositionRot);
-    table.put("PivotVelocityRPS", pivotVelocityRPS);
-    table.put("PivotAppliedVolts", pivotAppliedVolts);
-    table.put("PivotCurrentAmps", pivotCurrentAmps);
+    table.put("PivotPositionRot", pivotPositionRot, "rotations");
+    table.put("PivotVelocityRPS", pivotVelocityRPS, "rotations/second");
+    table.put("PivotAppliedVolts", pivotAppliedVolts, "volts");
+    table.put("PivotCurrentAmps", pivotCurrentAmps, "amps");
   }
 
   @Override

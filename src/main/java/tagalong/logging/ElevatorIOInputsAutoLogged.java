@@ -12,10 +12,10 @@ public class ElevatorIOInputsAutoLogged
     extends ElevatorIO.ElevatorIOInputs implements LoggableInputs, Cloneable {
   @Override
   public void toLog(LogTable table) {
-    table.put("ElevatorHeightM", elevatorHeightM);
-    table.put("ElevatorVelocityMPS", elevatorVelocityMPS);
-    table.put("ElevatorAppliedVolts", elevatorAppliedVolts);
-    table.put("ElevatorCurrentAmps", elevatorCurrentAmps);
+    table.put("ElevatorHeightM", elevatorHeightM, "meters");
+    table.put("ElevatorVelocityMPS", elevatorVelocityMPS, "meters/second");
+    table.put("ElevatorAppliedVolts", elevatorAppliedVolts, "volts");
+    table.put("ElevatorCurrentAmps", elevatorCurrentAmps, "amps");
   }
 
   @Override

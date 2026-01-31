@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+ * Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
  * Open Source Software; you may modify and/or share it under the terms of
  * the 3-Clause BSD License found in the root directory of this project.
  */
@@ -374,11 +374,11 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    *                                     command
    * @param maxAccelerationRPS2          The maximum acceleration of the pivot, in rotations per
    *                                     second squared, during this command
-   * @param upperToleranceRot            The number of rotations beyond the target
-   *                                     position the pivot can be
-   *                                     while still being considered in tolerance
    * @param lowerToleranceRot            The number of rotations short of the
    *                                     target position the pivot can be
+   *                                     while still being considered in tolerance
+   * @param upperToleranceRot            The number of rotations beyond the target
+   *                                     position the pivot can be
    *                                     while still being considered in tolerance
    * @param requiredInToleranceDurationS The number of seconds that being in
    *                                     tolerance is required for
@@ -512,6 +512,8 @@ public class PivotToCmd<T extends TagalongSubsystemBase & PivotAugment> extends 
    * @param maxVelocityRPS               The maximum velocity of the pivot, in
    *                                     rotations per second, during this
    *                                     command
+   * @param maxAccelerationRPS2          The maximum acceleration of the pivot, in rotations per
+   *                                     second squared, during this command
    * @param lowerToleranceRot            The number of rotations short of the
    *                                     target position the pivot can be
    *                                     while still being considered in tolerance

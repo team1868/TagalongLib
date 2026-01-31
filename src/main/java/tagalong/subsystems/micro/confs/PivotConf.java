@@ -1,11 +1,12 @@
 /**
- * Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+ * Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
  * Open Source Software; you may modify and/or share it under the terms of
  * the 3-Clause BSD License found in the root directory of this project.
  */
 
 package tagalong.subsystems.micro.confs;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -18,6 +19,7 @@ import tagalong.controls.FeedforwardConstants;
 import tagalong.controls.PIDSGVAConstants;
 import tagalong.devices.Encoders;
 import tagalong.devices.Motors;
+import tagalong.devices.TagalongCANBus;
 import tagalong.units.AccelerationUnits;
 import tagalong.units.DistanceUnits;
 import tagalong.units.VelocityUnits;
@@ -50,7 +52,7 @@ public class PivotConf extends MicrosystemConf {
   /**
    * CAN bus of the encoder
    */
-  public final String encoderCanBus;
+  public final CANBus encoderCanBus;
   /**
    * Ratio between the motor and encoder
    */
@@ -274,7 +276,7 @@ public class PivotConf extends MicrosystemConf {
     );
     this.encoderType = encoderType;
     this.encoderDeviceID = encoderDeviceID;
-    this.encoderCanBus = encoderCanBus;
+    this.encoderCanBus = TagalongCANBus.getOrRegisterPhoenixCANBus(encoderCanBus);
     this.encoderToPivotRatio = super.calculateGearRatio(encoderToPivotRatio);
     this.motorToEncoderRatio =
         super.calculateGearRatio(motorToPivotRatio) / this.encoderToPivotRatio;
