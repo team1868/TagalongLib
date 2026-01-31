@@ -1,8 +1,7 @@
 package tagalong.devices;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.CANBus;
+import java.util.Map;
 
 /**
  * Tagalong CANBus manager instance manager, only CTRE devices are currently registered or supported
@@ -15,7 +14,7 @@ public class TagalongCANBus {
 
   /**
    * Gets or registers a CTRE CANBus instance with the given name
-   * 
+   *
    * @param canBusName Name of the CANBus
    * @return CTRE CANBus instance
    */
@@ -30,11 +29,10 @@ public class TagalongCANBus {
 
   /**
    * Gets the map of all registered CTRE CANBus instances
-   * 
+   *
    * @return Map of CANBus instances
    */
   public static Map<String, CANBus> getPhoenixCANBusMap() {
     return _ctreCANBus;
   }
-
 }
