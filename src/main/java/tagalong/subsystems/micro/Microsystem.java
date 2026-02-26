@@ -375,6 +375,19 @@ public class Microsystem {
   }
 
   /**
+   * exits method if micro system is disabled, if enabled sets primary motor to
+   * specified value
+   *
+   * @param powerV desired voltage
+   */
+  public void setPrimaryVolts(double powerV) {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+    _primaryMotor.setVoltage(powerV);
+  }
+
+  /**
    * @return double(0.0 if micro system is disabled or actual power of primary
    *         motor)
    */
