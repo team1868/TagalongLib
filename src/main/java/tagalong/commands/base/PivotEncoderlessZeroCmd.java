@@ -77,7 +77,9 @@ public class PivotEncoderlessZeroCmd<T extends TagalongSubsystemBase & PivotAugm
    *                 Subsystem
    * @param pivot the pivot subsystem
    * @param hardstopPositionRot the angle of the pivot when against the hardstop
-   * @param power speed and direction to drive the pivot into the hardstop
+   * @param powerV speed and direction to drive the pivot into the hardstop
+   * @param stallToleranceRot angular distance traveled where the mechanism is still considered
+   *     stalled
    * @param stallDurationS time stalled before the system is considered zeroed in seconds
    */
   public PivotEncoderlessZeroCmd(
