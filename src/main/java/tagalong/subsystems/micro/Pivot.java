@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+ * Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
  * Open Source Software; you may modify and/or share it under the terms of
  * the 3-Clause BSD License found in the root directory of this project.
  */
@@ -106,7 +106,9 @@ public class Pivot extends Microsystem {
    * Simulated arm of the pivot
    */
   protected MechanismLigament2d _pivotLigament;
-
+  /**
+   * Dynamic scope offset to handle absolute encoders and unpredictable boot locations
+   */
   protected double _scopeOffset = 0.0;
 
   /**
@@ -329,7 +331,19 @@ public class Pivot extends Microsystem {
    * @return offset position in rotations
    */
   public double getFFPositionRad() {
-    return 0.0;
+    return _ffCenterOfMassOffsetRad;
+  }
+
+  /**
+   * Sets the position of the pivot in rotations
+   *
+   * @param rotations position set in rotations
+   */
+  public void setPivotPosition(double rotations) {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+    _primaryMotor.setPosition(pivotRotToMotor(rotations));
   }
 
   /**
@@ -700,6 +714,11 @@ public class Pivot extends Microsystem {
     return _pivotLigament;
   }
 
+  /**
+   * Gets the configured scope offset for the pivot
+   *
+   * @return scope offset in rotations
+   */
   public double getScopeOffset() {
     return _scopeOffset;
   }

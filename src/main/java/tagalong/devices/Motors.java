@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+ * Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
  * Open Source Software; you may modify and/or share it under the terms of
  * the 3-Clause BSD License found in the root directory of this project.
  */
@@ -36,14 +36,12 @@ public enum Motors implements CanDeviceInterface {
   FALCON500_FOC(6080, DCMotor::getFalcon500),
   /**
    * Kraken X44
-   * FUTURE DEV: Waiting for motor specifications v2025
    */
-  KRAKEN_X44(1, DCMotor::getKrakenX60),
+  KRAKEN_X44(7758, DCMotor::getKrakenX44),
   /**
-   * Kraken X44 in FOC mode -- RPM WAITING FOR SPEC
-   * FUTURE DEV: Waiting for motor specifications v2025
+   * Kraken X44 in FOC mode
    */
-  KRAKEN_X44_FOC(1, DCMotor::getKrakenX60Foc);
+  KRAKEN_X44_FOC(7368, DCMotor::getKrakenX44Foc);
 
   /**
    * Max free speed RPM and converted RPS of the motor

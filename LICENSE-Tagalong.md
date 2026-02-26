@@ -1,4 +1,4 @@
-Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

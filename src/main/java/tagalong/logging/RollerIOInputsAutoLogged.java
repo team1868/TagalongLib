@@ -12,10 +12,10 @@ public class RollerIOInputsAutoLogged
     extends RollerIO.RollerIOInputs implements LoggableInputs, Cloneable {
   @Override
   public void toLog(LogTable table) {
-    table.put("RollerPositionRot", rollerPositionRot);
-    table.put("RollerVelocityRPS", rollerVelocityRPS);
-    table.put("RollerAppliedVolts", rollerAppliedVolts);
-    table.put("RollerCurrentAmps", rollerCurrentAmps);
+    table.put("RollerPositionRot", rollerPositionRot, "rotations");
+    table.put("RollerVelocityRPS", rollerVelocityRPS, "rps");
+    table.put("RollerAppliedVolts", rollerAppliedVolts, "volts");
+    table.put("RollerCurrentAmps", rollerCurrentAmps, "amps");
   }
 
   @Override

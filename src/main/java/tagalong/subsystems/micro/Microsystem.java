@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
+ * Copyright 2024-2026 The Space Cookies : Girl Scout Troop #62868 and FRC Team #1868
  * Open Source Software; you may modify and/or share it under the terms of
  * the 3-Clause BSD License found in the root directory of this project.
  */
@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import tagalong.TagalongConfiguration;
 import tagalong.controls.PIDSGVAConstants;
+import tagalong.devices.TagalongCANBus;
 import tagalong.subsystems.micro.confs.MicrosystemConf;
 
 /**
@@ -187,7 +188,9 @@ public class Microsystem {
     // Initialize motors
     _allMotors = new TalonFX[conf.numMotors];
     for (int i = 0; i < conf.numMotors; i++) {
-      _allMotors[i] = new TalonFX(conf.motorDeviceIDs[i], conf.motorCanBus[i]);
+      _allMotors[i] = new TalonFX(
+          conf.motorDeviceIDs[i], TagalongCANBus.getOrRegisterPhoenixCANBus(conf.motorCanBus[i])
+      );
     }
     _primaryMotor = _allMotors[0];
     // FUTURE DEV: Inject this here rather than robot builder
@@ -369,6 +372,19 @@ public class Microsystem {
       return;
     }
     _primaryMotor.set(power);
+  }
+
+  /**
+   * exits method if micro system is disabled, if enabled sets primary motor to
+   * specified value
+   *
+   * @param powerV desired voltage
+   */
+  public void setPrimaryVolts(double powerV) {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+    _primaryMotor.setVoltage(powerV);
   }
 
   /**

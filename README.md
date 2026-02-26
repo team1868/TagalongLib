@@ -54,7 +54,6 @@ FUTURE DEV: List out microsystems and their specialized variants
 -->
 
 ### What functionalities are coming soon?
-- 2025 vendor package support
 - More included configurations for Microsystem subtypes
 - Pivot variant without a fused encoder or mechanically zeroed
 - Simulation based unit tests
@@ -79,4 +78,4 @@ Due to the required pairing of specific WPILib versions and other dependency ver
 
 > `(WPILibVersion in format YYYY.MajorMinor).MMDD`
 
-For example, a TagalongLib release on January 1st, 2025 using WPILib version 2024.1.0 would be version `2025.10.0101`.
+For example, a TagalongLib release on January 1st, 2026 using WPILib version 2026.1.0 would be version `2026.10.0101`.
