@@ -117,7 +117,7 @@ public class PivotEncoderlessZeroCmd<T extends TagalongSubsystemBase & PivotAugm
   public void end(boolean interrupted) {
     _pivot.setPrimaryPower(0.0);
     if (!interrupted)
-      _pivot.setElevatorHeight(_endAngleRot);
+      _pivot.setPivotPosition(_endAngleRot);
   }
 
   @Override
