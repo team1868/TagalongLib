@@ -13,7 +13,7 @@ public class RollerIOInputsAutoLogged
   @Override
   public void toLog(LogTable table) {
     table.put("RollerPositionRot", rollerPositionRot, "rotations");
-    table.put("RollerVelocityRPS", rollerVelocityRPS, "rotations/second");
+    table.put("RollerVelocityRPS", rollerVelocityRPS, "rps");
     table.put("RollerAppliedVolts", rollerAppliedVolts, "volts");
     table.put("RollerCurrentAmps", rollerCurrentAmps, "amps");
   }

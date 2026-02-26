@@ -13,7 +13,7 @@ public class PivotIOInputsAutoLogged
   @Override
   public void toLog(LogTable table) {
     table.put("PivotPositionRot", pivotPositionRot, "rotations");
-    table.put("PivotVelocityRPS", pivotVelocityRPS, "rotations/second");
+    table.put("PivotVelocityRPS", pivotVelocityRPS, "rps");
     table.put("PivotAppliedVolts", pivotAppliedVolts, "volts");
     table.put("PivotCurrentAmps", pivotCurrentAmps, "amps");
   }

@@ -78,4 +78,4 @@ Due to the required pairing of specific WPILib versions and other dependency ver
 
 > `(WPILibVersion in format YYYY.MajorMinor).MMDD`
 
-For example, a TagalongLib release on January 1st, 2026 using WPILib version 2024.1.0 would be version `2026.10.0101`.
+For example, a TagalongLib release on January 1st, 2026 using WPILib version 2026.1.0 would be version `2026.10.0101`.

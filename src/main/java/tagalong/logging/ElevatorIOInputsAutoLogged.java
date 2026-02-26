@@ -13,7 +13,7 @@ public class ElevatorIOInputsAutoLogged
   @Override
   public void toLog(LogTable table) {
     table.put("ElevatorHeightM", elevatorHeightM, "meters");
-    table.put("ElevatorVelocityMPS", elevatorVelocityMPS, "meters/second");
+    table.put("ElevatorVelocityMPS", elevatorVelocityMPS, "mps");
     table.put("ElevatorAppliedVolts", elevatorAppliedVolts, "volts");
     table.put("ElevatorCurrentAmps", elevatorCurrentAmps, "amps");
   }
