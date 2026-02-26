@@ -331,7 +331,19 @@ public class Pivot extends Microsystem {
    * @return offset position in rotations
    */
   public double getFFPositionRad() {
-    return 0.0;
+    return _ffCenterOfMassOffsetRad;
+  }
+
+  /**
+   * Sets the position of the pivot in rotations
+   *
+   * @param rotations position set in rotations
+   */
+  public void setElevatorHeight(double rotations) {
+    if (_isMicrosystemDisabled) {
+      return;
+    }
+    _primaryMotor.setPosition(pivotRotToMotor(rotations));
   }
 
   /**
